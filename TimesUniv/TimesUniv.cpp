@@ -397,9 +397,9 @@ void TimesUniv::loadProposals() //finish this function
 
 void TimesUniv::btGenerate_Click(Win::Event& e)
 {
-	int nHours, nCourse, nRooms;
+	int nHours, nCourse, nRooms,asign;
 	wstring cmd;
-	Sys::Format(cmd,L"SELECT COUNT(*) FROM classtime");
+	Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment");
 	//std::vector<Asignation> solution;
 	const int period=ddPeriod.GetSelectedIndex();
 	if(period<0)return;
@@ -409,6 +409,13 @@ void TimesUniv::btGenerate_Click(Win::Event& e)
 	{
 		Sql::SqlConnection conn;
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		asign=conn.GetInt(cmd);
+		if(asign<=0)
+		{
+			this->MessageBoxW(L"You haven't insert anything to generate a solution", L"Error", MB_OK| MB_ICONERROR);
+			return;
+		}
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM classtime");
 		nHours=conn.GetInt(cmd);
 		Sys::Format(cmd,L"SELECT COUNT(*) FROM classroom");
 		nRooms=conn.GetInt(cmd);
