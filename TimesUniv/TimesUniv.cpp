@@ -542,6 +542,8 @@ void TimesUniv::lvProposal_DblClk(Win::Event& e)
 	int period_id=ddPeriod.GetSelectedData();
 	EditCourseDlg dlg;
 	index=lvProposal.GetSelectedIndex();
+	if(index<=0) return;
+	if(idsol[index].course<=0) return;
 	dlg.professor_id=idsol[index].professor;
 	dlg.course_id=idsol[index].course;
 	dlg.group=(char)idsol[index].group[0];
