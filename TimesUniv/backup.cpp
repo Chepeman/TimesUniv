@@ -18,9 +18,9 @@ void TimesUniv::Window_Open(Win::Event& e)
 	toolbMain.Create(NULL, NULL, WS_CHILD | WS_VISIBLE | CCS_NORESIZE | CCS_NOPARENTALIGN | CCS_ADJUSTABLE | CCS_NODIVIDER | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS, 18, 1, 964, 42, hWnd, 1000);
 
 	//________________________________________________________ toolbMain
-	TBBUTTON tbButton[11];//<< EDIT HERE THE NUMBER OF BUTTONS
+	TBBUTTON tbButton[8];//<< EDIT HERE THE NUMBER OF BUTTONS
 
-	toolbMain.imageList.Create(22, 22, 10);//<< EDIT HERE THE NUMBER OF IMAGES
+	toolbMain.imageList.Create(22, 22, 8);//<< EDIT HERE THE NUMBER OF IMAGES
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_COORDINATOR);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_PROFESSOR);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CAREER);
@@ -29,8 +29,6 @@ void TimesUniv::Window_Open(Win::Event& e)
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_PERIOD);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CLASSROOM);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CLASSTIME);
-	toolbMain.imageList.AddIcon(this->hInstance, IDI_MSEXCEL);
-	toolbMain.imageList.AddIcon(this->hInstance, IDI_PRINT);
 
 	toolbMain.SendMessage(TB_BUTTONSTRUCTSIZE, (WPARAM)(int)sizeof(TBBUTTON), 0); 
 	toolbMain.SetImageList(toolbMain.imageList);
@@ -90,31 +88,10 @@ void TimesUniv::Window_Open(Win::Event& e)
 	tbButton[7].fsStyle=BTNS_BUTTON;
 	tbButton[7].dwData=0L; 
 	tbButton[7].iString= (LONG_PTR)L"Time";
-	//_______________________ A separator
-	tbButton[8].iBitmap=-1;
-	tbButton[8].idCommand=0;  
-	tbButton[8].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
-	tbButton[8].fsStyle=BTNS_SEP;  
-	tbButton[8].dwData=0L;  
-	tbButton[8].iString=0;   
-	//_____________________________________
-	tbButton[9].iBitmap=MAKELONG(8, 0); //<< IMAGE INDEX
-	tbButton[9].idCommand=IDM_MSEXCEL;
-	tbButton[9].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
-	tbButton[9].fsStyle=BTNS_BUTTON;
-	tbButton[9].dwData=0L; 
-	tbButton[9].iString= (LONG_PTR)L"Export";
-	//_____________________________________
-	tbButton[10].iBitmap=MAKELONG(9, 0); //<< IMAGE INDEX
-	tbButton[10].idCommand=IDM_PRINT;
-	tbButton[10].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
-	tbButton[10].fsStyle=BTNS_BUTTON;
-	tbButton[10].dwData=0L; 
-	tbButton[10].iString= (LONG_PTR)L"Print";
 
 	toolbMain.SetBitmapSize(20, 20);
 	toolbMain.SetButtonSize(24, 22);
-	toolbMain.AddButtons(tbButton, 11);// << EDIT HERE THE NUMBER OF BUTTONS
+	toolbMain.AddButtons(tbButton, 8);// << EDIT HERE THE NUMBER OF BUTTONS
 	toolbMain.SendMessage(TB_AUTOSIZE, 0, 0);
 	toolbMain.SetMaxTextRows(1);// EDIT HERE TO DISPLAY THE BUTTON TEXT
 	toolbMain.Show(SW_SHOWNORMAL);
@@ -572,6 +549,9 @@ void TimesUniv::lvProposal_ColumnClick(Win::Event& e)
 void TimesUniv::lvProposal_DblClk(Win::Event& e)
 {
 	int index=-1;
+	const int period=ddPeriod.GetSelectedIndex();
+	if(period<0)return;
+	int period_id=ddPeriod.GetSelectedData();
 	EditCourseDlg dlg;
 	index=lvProposal.GetSelectedIndex();
 	dlg.professor_id=idsol[index].professor;
@@ -579,8 +559,9 @@ void TimesUniv::lvProposal_DblClk(Win::Event& e)
 	dlg.group=(char)idsol[index].group[0];
 	dlg.classroom_id=idsol[index].classroom;
 	dlg.errorDescr=checkErrorDescription(idsol[index].course, (char)idsol[index].group[0]);
-	
+	dlg.period_id=period_id;
 	dlg.BeginDialog(hWnd);
+	loadProposals();
 }
 int TimesUniv::checkImage(int course, char group)
 {

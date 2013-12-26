@@ -100,8 +100,6 @@ protected:
 	void Window_Destroy(Win::Event& e);
 	void Window_Open(Win::Event& e);
 	void Window_Timer(Win::Event& e);
-	void Cmd_Print(Win::Event& e);
-	void Cmd_Msexcel(Win::Event& e);
 	void Cmd_Coordinator(Win::Event& e);
 	void Cmd_Professor(Win::Event& e);
 	void Cmd_Career(Win::Event& e);
@@ -119,8 +117,6 @@ protected:
 		if (btGenerate.IsEvent(e, BN_CLICKED)) {btGenerate_Click(e); return true;}
 		if (btClose.IsEvent(e, BN_CLICKED)) {btClose_Click(e); return true;}
 		if (ddPeriod.IsEvent(e, CBN_SELCHANGE)) {ddPeriod_SelChange(e); return true;}
-		if (this->IsEvent(e, IDM_PRINT)) {Cmd_Print(e); return true;}
-		if (this->IsEvent(e, IDM_MSEXCEL)) {Cmd_Msexcel(e); return true;}
 		if (this->IsEvent(e, IDM_COORDINATOR)) {Cmd_Coordinator(e); return true;}
 		if (this->IsEvent(e, IDM_PROFESSOR)) {Cmd_Professor(e); return true;}
 		if (this->IsEvent(e, IDM_CAREER)) {Cmd_Career(e); return true;}

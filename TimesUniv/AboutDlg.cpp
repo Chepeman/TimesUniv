@@ -3,7 +3,6 @@
 
 void AboutDlg::Window_Open(Win::Event& e)
 {
-	
 }
 
 void AboutDlg::btOk_Click(Win::Event& e)
