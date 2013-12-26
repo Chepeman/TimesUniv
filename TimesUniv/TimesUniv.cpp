@@ -574,3 +574,11 @@ wstring TimesUniv::checkErrorDescription(int course, char group)
 	}
 	return L"There's no error on this assignation";
 }
+void TimesUniv::bt3_Click(Win::Event& e)
+{
+}
+
+void TimesUniv::btExport_Click(Win::Event& e)
+{
+}
+

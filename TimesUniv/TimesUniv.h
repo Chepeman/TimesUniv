@@ -49,6 +49,8 @@ protected:
 	Win::Button btGenerate;
 	Win::Button btClose;
 	Win::DropDownList ddPeriod;
+	Win::Button bt3;
+	Win::Button btExport;
 protected:
 	Win::Gdi::Font fontArial014A;
 	void GetWindowInformation(CREATESTRUCT& createStruct)
@@ -66,9 +68,11 @@ protected:
 		ddCareer.Create(NULL, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_WINNORMALCASE, 15, 54, 243, 27, hWnd, 1003);
 		lvAsign.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_ALIGNLEFT | LVS_REPORT, 14, 85, 379, 463, hWnd, 1004);
 		lvProposal.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_ALIGNLEFT | LVS_REPORT, 415, 55, 568, 494, hWnd, 1005);
-		btGenerate.Create(NULL, L"Generate", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 875, 560, 110, 28, hWnd, 1006);
-		btClose.Create(NULL, L"Close", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 762, 560, 110, 28, hWnd, 1007);
+		btGenerate.Create(NULL, L"Generate", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 763, 561, 110, 28, hWnd, 1006);
+		btClose.Create(NULL, L"Close", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 650, 561, 110, 28, hWnd, 1007);
 		ddPeriod.Create(NULL, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_WINNORMALCASE, 263, 54, 130, 27, hWnd, 1008);
+		bt3.Create(NULL, L"Close", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 650, 561, 110, 28, hWnd, 1009);
+		btExport.Create(NULL, L"Save Export", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 876, 561, 110, 28, hWnd, 1010);
 		lvAsign.SetExtStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 		lvProposal.SetExtStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 		fontArial014A.Create(L"Arial", 14, false, false, false, false);
@@ -80,6 +84,8 @@ protected:
 		btGenerate.Font = fontArial014A;
 		btClose.Font = fontArial014A;
 		ddPeriod.Font = fontArial014A;
+		bt3.Font = fontArial014A;
+		btExport.Font = fontArial014A;
 		gbox1.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_CENTER, DOCK_BORDER);
 		gbox2.SetDock(DOCK_CENTER, DOCK_BORDER, DOCK_BORDER, DOCK_BORDER);
 		ddCareer.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_CENTER, DOCK_NONE);
@@ -88,6 +94,8 @@ protected:
 		btGenerate.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
 		btClose.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
 		ddPeriod.SetDock(DOCK_NONE, DOCK_BORDER, DOCK_CENTER, DOCK_NONE);
+		bt3.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
+		btExport.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
 	}
 	//_________________________________________________
 	void ddCareer_SelChange(Win::Event& e);
@@ -96,6 +104,8 @@ protected:
 	void btGenerate_Click(Win::Event& e);
 	void btClose_Click(Win::Event& e);
 	void ddPeriod_SelChange(Win::Event& e);
+	void bt3_Click(Win::Event& e);
+	void btExport_Click(Win::Event& e);
 	void Window_Close(Win::Event& e);
 	void Window_Destroy(Win::Event& e);
 	void Window_Open(Win::Event& e);
@@ -117,6 +127,8 @@ protected:
 		if (btGenerate.IsEvent(e, BN_CLICKED)) {btGenerate_Click(e); return true;}
 		if (btClose.IsEvent(e, BN_CLICKED)) {btClose_Click(e); return true;}
 		if (ddPeriod.IsEvent(e, CBN_SELCHANGE)) {ddPeriod_SelChange(e); return true;}
+		if (bt3.IsEvent(e, BN_CLICKED)) {bt3_Click(e); return true;}
+		if (btExport.IsEvent(e, BN_CLICKED)) {btExport_Click(e); return true;}
 		if (this->IsEvent(e, IDM_COORDINATOR)) {Cmd_Coordinator(e); return true;}
 		if (this->IsEvent(e, IDM_PROFESSOR)) {Cmd_Professor(e); return true;}
 		if (this->IsEvent(e, IDM_CAREER)) {Cmd_Career(e); return true;}

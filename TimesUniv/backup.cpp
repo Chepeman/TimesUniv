@@ -166,25 +166,6 @@ void TimesUniv::Window_Close(Win::Event& e)
 	btClose_Click(e);
 }
 
-void TimesUniv::Cmd_Print(Win::Event& e)
-{
-	Win::PrintDoc document;
-	document.Add(800,lvProposal.Items.GetCount()+1,lvProposal);
-	Win::PrintPreviewDlg dlg;
-	dlg.SetWidth(300);
-	dlg.BeginDialog_(hWnd,&document);
-}
-void TimesUniv::Cmd_Msexcel(Win::Event& e)
-{
-	Win::FileDlg dlg;
-	dlg.Clear();
-	dlg.SetFilter(L"Archivos Excel(*.xlsx)\0*.xlsx\0\0",0,L"xlsx");
-	if(dlg.BeginDialog(hWnd,L"Exportar a Excel",true))
-		lvProposal.ExportToMsExcel(dlg.GetFileNameFullPath());
-	else
-		this->MessageBox(L"No fue posible exportar la informacion",L"Exportar a Excel",MB_OK|MB_ICONERROR);
-}
-
 void TimesUniv::Cmd_Coordinator(Win::Event& e)
 {
 	ListViewsDlg dlg;
@@ -374,9 +355,9 @@ void TimesUniv::loadProposals() //finish this function
 
 void TimesUniv::btGenerate_Click(Win::Event& e)
 {
-	int nHours, nCourse, nRooms;
+	int nHours, nCourse, nRooms,asign;
 	wstring cmd;
-	Sys::Format(cmd,L"SELECT COUNT(*) FROM classtime");
+	Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment");
 	//std::vector<Asignation> solution;
 	const int period=ddPeriod.GetSelectedIndex();
 	if(period<0)return;
@@ -386,6 +367,13 @@ void TimesUniv::btGenerate_Click(Win::Event& e)
 	{
 		Sql::SqlConnection conn;
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		asign=conn.GetInt(cmd);
+		if(asign<=0)
+		{
+			this->MessageBoxW(L"You haven't insert anything to generate a solution", L"Error", MB_OK| MB_ICONERROR);
+			return;
+		}
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM classtime");
 		nHours=conn.GetInt(cmd);
 		Sys::Format(cmd,L"SELECT COUNT(*) FROM classroom");
 		nRooms=conn.GetInt(cmd);
@@ -584,3 +572,11 @@ wstring TimesUniv::checkErrorDescription(int course, char group)
 	}
 	return L"There's no error on this assignation";
 }
+void TimesUniv::bt3_Click(Win::Event& e)
+{
+}
+
+void TimesUniv::btExport_Click(Win::Event& e)
+{
+}
+
