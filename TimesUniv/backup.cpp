@@ -542,6 +542,8 @@ void TimesUniv::lvProposal_DblClk(Win::Event& e)
 	int period_id=ddPeriod.GetSelectedData();
 	EditCourseDlg dlg;
 	index=lvProposal.GetSelectedIndex();
+	if(index<=0) return;
+	if(idsol[index].course<=0) return;
 	dlg.professor_id=idsol[index].professor;
 	dlg.course_id=idsol[index].course;
 	dlg.group=(char)idsol[index].group[0];
@@ -572,10 +574,6 @@ wstring TimesUniv::checkErrorDescription(int course, char group)
 	}
 	return L"There's no error on this assignation";
 }
-void TimesUniv::bt3_Click(Win::Event& e)
-{
-}
-
 void TimesUniv::btExport_Click(Win::Event& e)
 {
 }

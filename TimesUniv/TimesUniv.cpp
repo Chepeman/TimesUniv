@@ -165,6 +165,87 @@ void TimesUniv::Window_Close(Win::Event& e)
 {
 	btClose_Click(e);
 }
+void TimesUniv::Window_Timer(Win::Event& e)
+{
+	if (e.wParam== MAIN_TIMER)
+	{
+		wchar_t info[128];
+		wstring cmd;
+		int sizei,sizej, cnt=-1;
+		const double derror = error.Get(); 
+		const double progress = threadObject.progress.Get(); 
+		_snwprintf_s(info, 128, _TRUNCATE, L"error=%g,  progress=%g",derror, progress); 
+		this->SetWindowText(info); 
+		if (threadObject.running.Get()==false) 
+		{ 
+			this->timer.Kill(MAIN_TIMER); 
+			threadObject.WaitForExit(); 
+			this->MessageBox(L"The solution has been reached", L"Solution", MB_OK);
+			//For solMon
+			sizei=solution.solMon.size();
+			sizej=solution.solMon[0].size();
+
+			try
+			{
+				Sql::SqlConnection conn;
+				conn.OpenSession(DSN, USERNAME, PASSWORD);
+				for(int i=0; i<sizei; i++)
+				{
+					for(int j=0; j<sizej; j++)
+					{
+						if(solution.solMon[i][j].course!=0 && solution.solMon[i][j].hour!=0)
+						{
+							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,1,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
+							conn.ExecuteNonQuery(cmd);
+							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,3,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
+							conn.ExecuteNonQuery(cmd);
+							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,5,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
+							conn.ExecuteNonQuery(cmd);
+							Sys::Format(cmd,L"INSERT INTO perturbation(professor_id, course_id, classroom_id,grupo)VALUES(%d,%d,%d,'%c')",solution.solMon[i][j].professor,solution.solMon[i][j].course, solution.solMon[i][j].classroom,solution.solMon[i][j].group[0]);
+							conn.ExecuteNonQuery(cmd);	
+						}
+					}
+				}
+				conn.CloseSession();
+			}
+			catch(Sql::SqlException e)
+			{
+				this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+			}
+
+			//For solThu
+			sizei=solution.solThu.size();
+			sizej=solution.solThu[0].size();
+
+			try
+			{
+				Sql::SqlConnection conn;
+				conn.OpenSession(DSN, USERNAME, PASSWORD);
+				for(int i=0; i<sizei; i++)
+				{
+					for(int j=0; j<sizej; j++)
+					{
+						if(solution.solThu[i][j].course!=0 && solution.solThu[i][j].hour!=0)
+						{
+							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,2,%d,'%c')",solution.solThu[i][j].course,solution.solThu[i][j].hour,solution.solThu[i][j].group[0]);
+							conn.ExecuteNonQuery(cmd);
+							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,4,%d,'%c')",solution.solThu[i][j].course,solution.solThu[i][j].hour,solution.solThu[i][j].group[0]);
+							conn.ExecuteNonQuery(cmd);
+							Sys::Format(cmd,L"INSERT INTO perturbation(professor_id, course_id, classroom_id,grupo)VALUES(%d,%d,%d,'%c')",solution.solThu[i][j].professor,solution.solThu[i][j].course, solution.solThu[i][j].classroom,solution.solThu[i][j].group[0]);
+							conn.ExecuteNonQuery(cmd);		
+						}
+					}
+				}
+				conn.CloseSession();
+			}
+			catch(Sql::SqlException e)
+			{
+				this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+			}
+		}
+		loadProposals();
+	}
+}
 
 void TimesUniv::Cmd_Coordinator(Win::Event& e)
 {
@@ -225,6 +306,65 @@ void TimesUniv::btClose_Click(Win::Event& e)
 	this->Minimize();
 	this->SetEnable(false);
 	this->Window_Open(e);
+}
+void TimesUniv::btGenerate_Click(Win::Event& e)
+{
+	int nHours, nCourse, nRooms,asign;
+	wstring cmd;
+	Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment");
+	//std::vector<Asignation> solution;
+	const int period=ddPeriod.GetSelectedIndex();
+	if(period<0)return;
+	int period_id=ddPeriod.GetSelectedData();
+	
+	try
+	{
+		Sql::SqlConnection conn;
+		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		asign=conn.GetInt(cmd);
+		if(asign<=0)
+		{
+			this->MessageBoxW(L"You haven't insert anything to generate a solution", L"Error", MB_OK| MB_ICONERROR);
+			return;
+		}
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM classtime");
+		nHours=conn.GetInt(cmd);
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM classroom");
+		nRooms=conn.GetInt(cmd);
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment");
+		nCourse=conn.GetInt(cmd);
+		Sys::Format(cmd,L"DELETE FROM perturbation");
+		conn.ExecuteSelect(cmd);
+		Sys::Format(cmd,L"DELETE FROM course_time");
+		conn.ExecuteSelect(cmd);
+		conn.CloseSession();
+	}
+	catch(Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+	
+	solution=Solution::Solution(nHours,nRooms,nCourse);
+	solution.period_id=period_id;
+	solutionWork1=Solution::Solution(nHours,nRooms,nCourse);
+	solutionWork1.period_id=period_id;
+	solutionWork2=Solution::Solution(nHours,nRooms,nCourse);
+	solutionWork2.period_id=period_id;
+
+	//simAnneal.goal = 1e-9; 
+	simAnneal.goal = 0;
+	simAnneal.initialTemp = 6; 
+	simAnneal.finalTemp = 1; 
+	simAnneal.numTemps = 2500; 
+	simAnneal.numIterations = 5; 
+	simAnneal.cycles = 10; 
+	simAnneal.isCoolingScheduleLinear = false; 
+	simAnneal.Setup(error, solution, solutionWork1, solutionWork2);
+	threadObject.StartThread(simAnneal); 
+	this->timer.Set(MAIN_TIMER, 1000);
+}
+void TimesUniv::btExport_Click(Win::Event& e)
+{
 }
 
 void TimesUniv::loadAssignments()
@@ -323,7 +463,6 @@ void TimesUniv::loadProposals() //finish this function
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
 		conn.ExecuteSelect(cmd,100,lvProposal);
-		//lvProposal.Items[0].SetImageIndex(0);
 		Sys::Format(cmd, L"SELECT course_id, professor_id, classroom_id, grupo FROM perturbation ORDER BY course_id");
 		conn.ExecuteSelect(cmd);
 		conn.BindColumn(1,IDs.course);
@@ -351,176 +490,6 @@ void TimesUniv::loadProposals() //finish this function
 		lvProposal.Items[i].SetImageIndex(resultCheck);
 	}
 	lvProposal.SetRedraw(true);
-}
-
-void TimesUniv::btGenerate_Click(Win::Event& e)
-{
-	int nHours, nCourse, nRooms,asign;
-	wstring cmd;
-	Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment");
-	//std::vector<Asignation> solution;
-	const int period=ddPeriod.GetSelectedIndex();
-	if(period<0)return;
-	int period_id=ddPeriod.GetSelectedData();
-	
-	try
-	{
-		Sql::SqlConnection conn;
-		conn.OpenSession(DSN, USERNAME, PASSWORD);
-		asign=conn.GetInt(cmd);
-		if(asign<=0)
-		{
-			this->MessageBoxW(L"You haven't insert anything to generate a solution", L"Error", MB_OK| MB_ICONERROR);
-			return;
-		}
-		Sys::Format(cmd,L"SELECT COUNT(*) FROM classtime");
-		nHours=conn.GetInt(cmd);
-		Sys::Format(cmd,L"SELECT COUNT(*) FROM classroom");
-		nRooms=conn.GetInt(cmd);
-		Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment");
-		nCourse=conn.GetInt(cmd);
-		Sys::Format(cmd,L"DELETE FROM perturbation");
-		conn.ExecuteSelect(cmd);
-		Sys::Format(cmd,L"DELETE FROM course_time");
-		conn.ExecuteSelect(cmd);
-		conn.CloseSession();
-	}
-	catch(Sql::SqlException e)
-	{
-		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
-	}
-	
-	solution=Solution::Solution(nHours,nRooms,nCourse);
-	solution.period_id=period_id;
-	solutionWork1=Solution::Solution(nHours,nRooms,nCourse);
-	solutionWork1.period_id=period_id;
-	solutionWork2=Solution::Solution(nHours,nRooms,nCourse);
-	solutionWork2.period_id=period_id;
-
-	//simAnneal.goal = 1e-9; 
-	simAnneal.goal = 0;
-	simAnneal.initialTemp = 6; 
-	simAnneal.finalTemp = 1; 
-	simAnneal.numTemps = 2500; 
-	simAnneal.numIterations = 5; 
-	simAnneal.cycles = 10; 
-	simAnneal.isCoolingScheduleLinear = false; 
-	simAnneal.Setup(error, solution, solutionWork1, solutionWork2);
-	//simAnneal.Setup(error, solution, solutionWork1, solutionWork2);
-	threadObject.StartThread(simAnneal); 
-	this->timer.Set(MAIN_TIMER, 1000);
-		
-	/*Solution sol(nHours,nRooms,nCourse);
-	sol.SimAnnealInitialize();*/
-}
-void TimesUniv::Window_Timer(Win::Event& e)
-{
-	if (e.wParam== MAIN_TIMER)
-	{
-		wchar_t info[128];
-		wstring cmd;
-		int sizei,sizej, cnt=-1;
-		const double derror = error.Get(); 
-		const double progress = threadObject.progress.Get(); 
-		_snwprintf_s(info, 128, _TRUNCATE, L"error=%g,  progress=%g",derror, progress); 
-		this->SetWindowText(info); 
-		if (threadObject.running.Get()==false) 
-		{ 
-			this->timer.Kill(MAIN_TIMER); 
-			threadObject.WaitForExit(); 
-			//_snwprintf_s(info, 128, _TRUNCATE, L"x=%g, y=%g", solution.x, solution.y);
-			this->MessageBox(L"The solution has been reached", L"Solution", MB_OK);
-			//For solMon
-			sizei=solution.solMon.size();
-			sizej=solution.solMon[0].size();
-
-			try
-			{
-				Sql::SqlConnection conn;
-				conn.OpenSession(DSN, USERNAME, PASSWORD);
-				for(int i=0; i<sizei; i++)
-				{
-					for(int j=0; j<sizej; j++)
-					{
-						if(solution.solMon[i][j].course!=0 && solution.solMon[i][j].hour!=0)
-						{
-							/*Sys::Format(cmd, L"SELECT COUNT(*) FROM perturbation WHERE professor_id=%d AND course_id=%d AND classroom_id=%d", solution.solMon[i][j].professor,solution.solMon[i][j].course,solution.solMon[i][j].classroom);
-							cnt=conn.GetInt(cmd);
-							if(cnt==0)
-							{*/
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,1,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,3,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,5,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-								Sys::Format(cmd,L"INSERT INTO perturbation(professor_id, course_id, classroom_id,grupo)VALUES(%d,%d,%d,'%c')",solution.solMon[i][j].professor,solution.solMon[i][j].course, solution.solMon[i][j].classroom,solution.solMon[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-							/*}
-							else
-							{
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,1,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,3,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,5,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-							}	*/		
-						}
-					}
-				}
-				conn.CloseSession();
-			}
-			catch(Sql::SqlException e)
-			{
-				this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
-			}
-
-			//For solThu
-			sizei=solution.solThu.size();
-			sizej=solution.solThu[0].size();
-
-			try
-			{
-				Sql::SqlConnection conn;
-				conn.OpenSession(DSN, USERNAME, PASSWORD);
-				for(int i=0; i<sizei; i++)
-				{
-					for(int j=0; j<sizej; j++)
-					{
-						if(solution.solThu[i][j].course!=0 && solution.solThu[i][j].hour!=0)
-						{
-							//Sys::Format(cmd, L"SELECT COUNT(*) FROM perturbation WHERE professor_id=%d AND course_id=%d AND classroom_id=%d", solution.solThu[i][j].professor,solution.solThu[i][j].course,solution.solThu[i][j].classroom);
-							/*cnt=conn.GetInt(cmd);
-							if(cnt==0)
-							{*/
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,2,%d,'%c')",solution.solThu[i][j].course,solution.solThu[i][j].hour,solution.solThu[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,4,%d,'%c')",solution.solThu[i][j].course,solution.solThu[i][j].hour,solution.solThu[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-								Sys::Format(cmd,L"INSERT INTO perturbation(professor_id, course_id, classroom_id,grupo)VALUES(%d,%d,%d,'%c')",solution.solThu[i][j].professor,solution.solThu[i][j].course, solution.solThu[i][j].classroom,solution.solThu[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-							/*}
-							else
-							{
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,2,%d,'%c')",solution.solThu[i][j].course,solution.solThu[i][j].hour,solution.solThu[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-								Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,4,%d,'%c')",solution.solThu[i][j].course,solution.solThu[i][j].hour,solution.solThu[i][j].group[0]);
-								conn.ExecuteNonQuery(cmd);
-							}	*/		
-		
-						}
-					}
-				}
-				conn.CloseSession();
-			}
-			catch(Sql::SqlException e)
-			{
-				this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
-			}
-		}
-		loadProposals();
-	}
 }
 
 void TimesUniv::ddPeriod_SelChange(Win::Event& e)
@@ -571,14 +540,6 @@ wstring TimesUniv::checkErrorDescription(int course, char group)
 	{
 		if(solution.errorCourses[i].course_id==course && solution.errorCourses[i].grupo==group)
 			return solution.errorCourses[i].descr;
-	}
+	} 
 	return L"There's no error on this assignation";
 }
-void TimesUniv::bt3_Click(Win::Event& e)
-{
-}
-
-void TimesUniv::btExport_Click(Win::Event& e)
-{
-}
-
