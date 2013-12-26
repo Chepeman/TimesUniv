@@ -3,7 +3,7 @@
 
 void AboutDlg::Window_Open(Win::Event& e)
 {
-	int putitaoriginal;
+	
 }
 
 void AboutDlg::btOk_Click(Win::Event& e)
