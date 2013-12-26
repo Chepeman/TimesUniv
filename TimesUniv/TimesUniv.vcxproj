@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C3AADD31-32FD-45D5-836E-13767028E431}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>TimesUniv</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="add.ico" />
+    <None Include="apple.bmp" />
+    <None Include="career.ico" />
+    <None Include="classroom.ico" />
+    <None Include="classtime.ico" />
+    <None Include="close.ico" />
+    <None Include="coordinator.ico" />
+    <None Include="copy.ico" />
+    <None Include="course.ico" />
+    <None Include="cut.ico" />
+    <None Include="delete.ico" />
+    <None Include="dept.ico" />
+    <None Include="edit.ico" />
+    <None Include="filter.ico" />
+    <None Include="help.ico" />
+    <None Include="msexcel.ico" />
+    <None Include="myLogo.emf" />
+    <None Include="new.ico" />
+    <None Include="open.ico" />
+    <None Include="paste.ico" />
+    <None Include="period.ico" />
+    <None Include="print.ico" />
+    <None Include="printPreview.ico" />
+    <None Include="professor.ico" />
+    <None Include="purple.avi" />
+    <None Include="ReadMe.txt" />
+    <None Include="save.ico" />
+    <None Include="TimesUniv.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AboutDlg.h" />
+    <ClInclude Include="ClassroomDlg.h" />
+    <ClInclude Include="CoordDlg.h" />
+    <ClInclude Include="CoordMng.h" />
+    <ClInclude Include="CourseDlg.h" />
+    <ClInclude Include="DeptDlg.h" />
+    <ClInclude Include="EditCourseDlg.h" />
+    <ClInclude Include="ListViewsDlg.h" />
+    <ClInclude Include="LoginDlg.h" />
+    <ClInclude Include="PeriodDlg.h" />
+    <ClInclude Include="ProfDlg.h" />
+    <ClInclude Include="ProgramDlg.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Solution.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TimeDlg.h" />
+    <ClInclude Include="TimesUniv.h" />
+    <ClInclude Include="Wintempla.h" />
+    <ClInclude Include="WintemplaWin.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AboutDlg.cpp" />
+    <ClCompile Include="ClassroomDlg.cpp" />
+    <ClCompile Include="CoordDlg.cpp" />
+    <ClCompile Include="CoordMng.cpp" />
+    <ClCompile Include="CourseDlg.cpp" />
+    <ClCompile Include="DeptDlg.cpp" />
+    <ClCompile Include="EditCourseDlg.cpp" />
+    <ClCompile Include="ListViewsDlg.cpp" />
+    <ClCompile Include="LoginDlg.cpp" />
+    <ClCompile Include="PeriodDlg.cpp" />
+    <ClCompile Include="ProfDlg.cpp" />
+    <ClCompile Include="ProgramDlg.cpp" />
+    <ClCompile Include="Solution.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TimeDlg.cpp" />
+    <ClCompile Include="TimesUniv.cpp" />
+    <ClCompile Include="Wintempla.cpp" />
+    <ClCompile Include="WintemplaWin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TimesUniv.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="TimesUniv.exe.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ico00001.ico" />
+    <Image Include="icon1.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

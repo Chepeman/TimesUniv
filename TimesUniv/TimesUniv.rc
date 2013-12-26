@@ -1,0 +1,212 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Spanish (Mexico) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESM)
+LANGUAGE LANG_SPANISH, SUBLANG_SPANISH_MEXICAN
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_TIMESUNIV           ICON                    "TimesUniv.ico"
+IDI_ADD                 ICON                    "add.ico"
+IDI_CLOSE               ICON                    "close.ico"
+IDI_COPY                ICON                    "copy.ico"
+IDI_CUT                 ICON                    "cut.ico"
+IDI_DELETE              ICON                    "delete.ico"
+IDI_EDIT                ICON                    "edit.ico"
+IDI_FILTER              ICON                    "filter.ico"
+IDI_HELP                ICON                    "help.ico"
+IDI_NEW                 ICON                    "new.ico"
+IDI_OPEN                ICON                    "open.ico"
+IDI_PASTE               ICON                    "paste.ico"
+IDI_PRINT               ICON                    "print.ico"
+IDI_PRINTPREVIEW        ICON                    "printPreview.ico"
+IDI_SAVE                ICON                    "save.ico"
+IDI_MSEXCEL             ICON                    "msexcel.ico"
+IDI_CAREER              ICON                    "career.ico"
+IDI_CLASSROOM           ICON                    "classroom.ico"
+IDI_CLASSTIME           ICON                    "classtime.ico"
+IDI_COORDINATOR         ICON                    "coordinator.ico"
+IDI_COURSE              ICON                    "course.ico"
+IDI_DEPT                ICON                    "dept.ico"
+IDI_PERIOD              ICON                    "period.ico"
+IDI_PROFESSOR           ICON                    "professor.ico"
+IDI_VOID                ICON                    "ico00001.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDC_TIMESUNIV MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New",                        IDM_NEW
+        MENUITEM "&Open",                       IDM_OPEN
+        MENUITEM "&Save",                       IDM_SAVE
+        MENUITEM SEPARATOR
+        MENUITEM "&Print",                      IDM_PRINT
+        MENUITEM "Print Previe&w",              IDM_PRINTPREVIEW
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       IDM_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Copy",                       IDM_COPY
+        MENUITEM "&Paste",                      IDM_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "&Select",                     IDM_SELECT
+        MENUITEM "&Modify",                     IDM_EDIT
+        MENUITEM "&Insert",                     IDM_INSERT
+        MENUITEM "&Delete",                     IDM_DELETE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About ...",                  IDM_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDC_TIMESUNIV ACCELERATORS
+BEGIN
+    "/",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
+    "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
+    VK_RETURN,      IDM_CAREER,             VIRTKEY, NOINVERT
+    VK_RETURN,      IDM_CLASSROOM,          VIRTKEY, NOINVERT
+    VK_RETURN,      IDM_CLASSTIME,          VIRTKEY, NOINVERT
+    "c",            IDM_COPY,               ASCII,  ALT, NOINVERT
+    VK_RETURN,      IDM_COORDINATOR,        VIRTKEY, NOINVERT
+    VK_RETURN,      IDM_COURSE,             VIRTKEY, NOINVERT
+    "d",            IDM_DELETE,             ASCII,  ALT, NOINVERT
+    VK_RETURN,      IDM_DEPT,               VIRTKEY, NOINVERT
+    "e",            IDM_EDIT,               ASCII,  ALT, NOINVERT
+    "i",            IDM_INSERT,             ASCII,  ALT, NOINVERT
+    "n",            IDM_NEW,                ASCII,  ALT, NOINVERT
+    "o",            IDM_OPEN,               ASCII,  ALT, NOINVERT
+    "v",            IDM_PASTE,              ASCII,  ALT, NOINVERT
+    VK_RETURN,      IDM_PERIOD,             VIRTKEY, NOINVERT
+    "p",            IDM_PRINT,              ASCII,  ALT, NOINVERT
+    "w",            IDM_PRINTPREVIEW,       ASCII,  ALT, NOINVERT
+    VK_RETURN,      IDM_PROFESSOR,          VIRTKEY, NOINVERT
+    "s",            IDM_SAVE,               ASCII,  ALT, NOINVERT
+    "s",            IDM_SELECT,             ASCII,  ALT, NOINVERT
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_APPLE               BITMAP                  "apple.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDC_TIMESUNIV           "TIMESUNIV"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_APP_TITLE           "TimesUniv"
+END
+
+#endif    // Spanish (Mexico) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Spanish (Spain, International Sort) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)
+LANGUAGE LANG_SPANISH, SUBLANG_SPANISH_MODERN
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+32513                   ICON                    "icon1.ico"
+#endif    // Spanish (Spain, International Sort) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
