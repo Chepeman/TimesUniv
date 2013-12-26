@@ -15,6 +15,7 @@ struct CoursesID //Needs to be modified, adding the quota and professor hours
 	int professor;
 	int classroom;
 	wchar_t group[2];
+	int hola;
 };
 
 class TimesUniv: public Win::Window
