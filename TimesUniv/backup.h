@@ -1,142 +1,88 @@
-#pragma once  //______________________________________ TimesUniv.h  
+#pragma once   //_____________________________________________ EditCourseDlg.h  
 #include "resource.h"
-#include "AboutDlg.h"
-#include "Solution.h"
-#include "LoginDlg.h"
-#include "ListViewsDlg.h"
-#include "CoordMng.h"
-#include "EditCourseDlg.h"
 
-#define MAIN_TIMER 1
-
-struct CoursesID //Needs to be modified, adding the quota and professor hours
-{
-	int course;
-	int professor;
-	int classroom;
-	wchar_t group[2];
-};
-
-class TimesUniv: public Win::Window
+class EditCourseDlg: public Win::Dialog
 {
 public:
-	TimesUniv()
+	EditCourseDlg()
+	{
+		professor_id=-1;
+		course_id=-1;
+		classroom_id=-1;
+		group='Z';
+		period_id=-1;
+		classhours=-1;
+	}
+	~EditCourseDlg()
 	{
 	}
-	~TimesUniv()
-	{
-	}
-	void loadAssignments();
-	vector<Assign> assign;
-	void loadProposals();
-	Mt::DoubleTs error;
-	Solution solution, solutionWork1, solutionWork2; 
-	Math::SimulatedAnnealing simAnneal; 
-	Mt::ThreadObject threadObject;
-	Win::ImageList imageList;
-	std::vector<struct CoursesID> idsol;
-	const wchar_t * GetClassName(){return L"TIMESUNIV";}
-	int checkImage(int course, char group);
-	wstring checkErrorDescription(int course, char group);
-protected:
+
+	int professor_id, course_id, classroom_id, period_id, classhours;
+	char group;
+	wstring errorDescr;
+private:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
-	Win::Toolbar toolbMain;
 	Win::Button gbox1;
-	Win::Button gbox2;
-	Win::DropDownList ddCareer;
-	Win::ListView lvAsign;
-	Win::ListView lvProposal;
-	Win::Button btGenerate;
-	Win::Button btClose;
-	Win::DropDownList ddPeriod;
-	Win::Button btClose;
-	Win::Button btExport;
+	Win::Button btOk;
+	Win::Button btCancel;
+	Win::Label lb4;
+	Win::Textbox tbxQuota;
+	Win::Label lb5;
+	Win::DropDownList ddHours;
+	Win::Label lb6;
+	Win::DropDownList ddClassroom;
+	Win::Textbox tbxError;
+	Win::Textbox tbxCourse;
+	Win::Textbox tbxProfessor;
+	Win::Textbox tbxGroup;
 protected:
 	Win::Gdi::Font fontArial014A;
-	void GetWindowInformation(CREATESTRUCT& createStruct)
+	void GetDialogTemplate(DLGTEMPLATE& dlgTemplate)
 	{
-		createStruct.dwExStyle = WS_EX_STATICEDGE;
-		createStruct.style = WS_CLIPCHILDREN | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_OVERLAPPEDWINDOW | WS_THICKFRAME;
+		dlgTemplate.cx = Sys::Convert::PixelToDlgUnitX(734);
+		dlgTemplate.cy = Sys::Convert::PixelToDlgUnitY(330);
+		dlgTemplate.style = WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_VISIBLE | DS_CENTER | DS_MODALFRAME;
 	}
 	//_________________________________________________
 	void InitializeGui()
 	{
-		this->Text = L"TimesUniv";
-		toolbMain.Create(NULL, NULL, WS_CHILD | WS_VISIBLE | CCS_NORESIZE | CCS_NOPARENTALIGN | CCS_ADJUSTABLE | CCS_NODIVIDER | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS, 18, 1, 964, 42, hWnd, 1000);
-		gbox1.Create(WS_EX_TRANSPARENT, NULL, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 4, 38, 396, 519, hWnd, 1001);
-		gbox2.Create(WS_EX_TRANSPARENT, NULL, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 407, 38, 586, 519, hWnd, 1002);
-		ddCareer.Create(NULL, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_WINNORMALCASE, 15, 54, 243, 27, hWnd, 1003);
-		lvAsign.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_ALIGNLEFT | LVS_REPORT, 14, 85, 379, 463, hWnd, 1004);
-		lvProposal.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_ALIGNLEFT | LVS_REPORT, 415, 55, 568, 494, hWnd, 1005);
-		btGenerate.Create(NULL, L"Generate", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 763, 561, 110, 28, hWnd, 1006);
-		btClose.Create(NULL, L"Close", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 650, 561, 110, 28, hWnd, 1007);
-		ddPeriod.Create(NULL, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_WINNORMALCASE, 263, 54, 130, 27, hWnd, 1008);
-		btClose.Create(NULL, L"Close", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 650, 561, 110, 28, hWnd, 1009);
-		btExport.Create(NULL, L"Save && Export", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 876, 561, 110, 28, hWnd, 1010);
-		lvAsign.SetExtStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-		lvProposal.SetExtStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+		gbox1.Create(WS_EX_TRANSPARENT, L"Course Information", WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 40, 35, 674, 275, hWnd, 1000);
+		btOk.Create(NULL, L"Accept", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 480, 276, 107, 28, hWnd, 1001);
+		btCancel.Create(NULL, L"Cancel", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 600, 276, 107, 28, hWnd, 1002);
+		lb4.Create(NULL, L"Quota", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 50, 119, 79, 25, hWnd, 1003);
+		tbxQuota.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_WINNORMALCASE, 139, 120, 121, 25, hWnd, 1004);
+		lb5.Create(NULL, L"Class Hours", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 391, 119, 132, 25, hWnd, 1005);
+		ddHours.Create(NULL, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_WINNORMALCASE, 538, 118, 162, 25, hWnd, 1006);
+		lb6.Create(NULL, L"Classroom", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 50, 190, 128, 25, hWnd, 1007);
+		ddClassroom.Create(NULL, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_WINNORMALCASE, 188, 189, 128, 25, hWnd, 1008);
+		tbxError.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_READONLY | ES_LEFT | ES_WINNORMALCASE, 52, 269, 294, 25, hWnd, 1009);
+		tbxCourse.Create(WS_EX_CLIENTEDGE, L"Course Name: ", WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_WINNORMALCASE, 48, 61, 211, 25, hWnd, 1010);
+		tbxProfessor.Create(WS_EX_CLIENTEDGE, L"Professor: ", WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_READONLY | ES_LEFT | ES_WINNORMALCASE, 279, 60, 200, 25, hWnd, 1011);
+		tbxGroup.Create(WS_EX_CLIENTEDGE, L"Group:", WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_READONLY | ES_LEFT | ES_WINNORMALCASE, 518, 58, 184, 25, hWnd, 1012);
 		fontArial014A.Create(L"Arial", 14, false, false, false, false);
 		gbox1.Font = fontArial014A;
-		gbox2.Font = fontArial014A;
-		ddCareer.Font = fontArial014A;
-		lvAsign.Font = fontArial014A;
-		lvProposal.Font = fontArial014A;
-		btGenerate.Font = fontArial014A;
-		btClose.Font = fontArial014A;
-		ddPeriod.Font = fontArial014A;
-		btClose.Font = fontArial014A;
-		btExport.Font = fontArial014A;
-		gbox1.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_CENTER, DOCK_BORDER);
-		gbox2.SetDock(DOCK_CENTER, DOCK_BORDER, DOCK_BORDER, DOCK_BORDER);
-		ddCareer.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_CENTER, DOCK_NONE);
-		lvAsign.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_CENTER, DOCK_BORDER);
-		lvProposal.SetDock(DOCK_CENTER, DOCK_BORDER, DOCK_BORDER, DOCK_BORDER);
-		btGenerate.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
-		btClose.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
-		ddPeriod.SetDock(DOCK_NONE, DOCK_BORDER, DOCK_CENTER, DOCK_NONE);
-		btClose.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
-		btExport.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
+		btOk.Font = fontArial014A;
+		btCancel.Font = fontArial014A;
+		lb4.Font = fontArial014A;
+		tbxQuota.Font = fontArial014A;
+		lb5.Font = fontArial014A;
+		ddHours.Font = fontArial014A;
+		lb6.Font = fontArial014A;
+		ddClassroom.Font = fontArial014A;
+		tbxError.Font = fontArial014A;
+		tbxCourse.Font = fontArial014A;
+		tbxProfessor.Font = fontArial014A;
+		tbxGroup.Font = fontArial014A;
 	}
 	//_________________________________________________
-	void ddCareer_SelChange(Win::Event& e);
-	void lvProposal_ColumnClick(Win::Event& e);
-	void lvProposal_DblClk(Win::Event& e);
-	void btGenerate_Click(Win::Event& e);
-	void btClose_Click(Win::Event& e);
-	void ddPeriod_SelChange(Win::Event& e);
-	void btClose_Click(Win::Event& e);
-	void btExport_Click(Win::Event& e);
-	void Window_Close(Win::Event& e);
-	void Window_Destroy(Win::Event& e);
+	void btOk_Click(Win::Event& e);
+	void btCancel_Click(Win::Event& e);
 	void Window_Open(Win::Event& e);
-	void Window_Timer(Win::Event& e);
-	void Cmd_Coordinator(Win::Event& e);
-	void Cmd_Professor(Win::Event& e);
-	void Cmd_Career(Win::Event& e);
-	void Cmd_Course(Win::Event& e);
-	void Cmd_Dept(Win::Event& e);
-	void Cmd_Period(Win::Event& e);
-	void Cmd_Classroom(Win::Event& e);
-	void Cmd_Classtime(Win::Event& e);
 	//_________________________________________________
 	bool EventHandler(Win::Event& e)
 	{
-		if (ddCareer.IsEvent(e, CBN_SELCHANGE)) {ddCareer_SelChange(e); return true;}
-		if (lvProposal.IsEvent(e, LVN_COLUMNCLICK)) {lvProposal_ColumnClick(e); return true;}
-		if (lvProposal.IsEvent(e, NM_DBLCLK)) {lvProposal_DblClk(e); return true;}
-		if (btGenerate.IsEvent(e, BN_CLICKED)) {btGenerate_Click(e); return true;}
-		if (btClose.IsEvent(e, BN_CLICKED)) {btClose_Click(e); return true;}
-		if (ddPeriod.IsEvent(e, CBN_SELCHANGE)) {ddPeriod_SelChange(e); return true;}
-		if (btClose.IsEvent(e, BN_CLICKED)) {btClose_Click(e); return true;}
-		if (btExport.IsEvent(e, BN_CLICKED)) {btExport_Click(e); return true;}
-		if (this->IsEvent(e, IDM_COORDINATOR)) {Cmd_Coordinator(e); return true;}
-		if (this->IsEvent(e, IDM_PROFESSOR)) {Cmd_Professor(e); return true;}
-		if (this->IsEvent(e, IDM_CAREER)) {Cmd_Career(e); return true;}
-		if (this->IsEvent(e, IDM_COURSE)) {Cmd_Course(e); return true;}
-		if (this->IsEvent(e, IDM_DEPT)) {Cmd_Dept(e); return true;}
-		if (this->IsEvent(e, IDM_PERIOD)) {Cmd_Period(e); return true;}
-		if (this->IsEvent(e, IDM_CLASSROOM)) {Cmd_Classroom(e); return true;}
-		if (this->IsEvent(e, IDM_CLASSTIME)) {Cmd_Classtime(e); return true;}
+		if (btOk.IsEvent(e, BN_CLICKED)) {btOk_Click(e); return true;}
+		if (btCancel.IsEvent(e, BN_CLICKED)) {btCancel_Click(e); return true;}
 		return false;
 	}
 };

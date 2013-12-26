@@ -51,9 +51,9 @@ void EditCourseDlg::Window_Open(Win::Event& e)
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 
-	lb1.Text+=course;
-	lb2.Text+=professor;
-	lb3.Text+=grupo;
+	tbxCourse.Text+=course;
+	tbxProfessor.Text+=professor;
+	tbxGroup.Text+=grupo;
 	tbxQuota.Text=Sys::Convert::ToString(cupo);
 	tbxError.Text=errorDescr;
 	//________________________________________________________ ddClassroom
