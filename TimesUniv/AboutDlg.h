@@ -10,6 +10,7 @@ public:
 	~AboutDlg()
 	{
 	}
+	int putita2;
 private:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
 	Win::Label lbInfo;
