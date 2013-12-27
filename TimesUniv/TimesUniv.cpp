@@ -458,7 +458,7 @@ void TimesUniv::loadProposals() //finish this function
 							AND w.week_day_id=ct.week_day_id\
 							AND cte.classtime_id=ct.classtime_id\
 							AND w.week_day_id BETWEEN 1 AND 2\
-							AND ct.grupo=pt.grupo ORDER BY c.course_id");
+							AND ct.grupo=pt.grupo ORDER BY c.course_id, pt.grupo");
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
