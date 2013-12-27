@@ -7,9 +7,8 @@ struct ScheduleID //Needs to be modified, adding the quota and professor hours
 	int course_id;
 	int classroom_id;
 	int classhours;
-	int onetwo;
 	wchar_t grupo[2];
-	wstring periodDateEnd;
+	
 };
 class ScheduleDlg: public Win::Dialog
 {
@@ -30,7 +29,7 @@ private:
 	
 	
 	vector<ScheduleID> schedule;
-	void makeRandoms(void);
+	
 protected:
 	Win::Gdi::Font fontArial014A;
 	void GetDialogTemplate(DLGTEMPLATE& dlgTemplate)

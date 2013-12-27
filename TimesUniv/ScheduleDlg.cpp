@@ -38,6 +38,7 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 	wstring cmd;
 	ScheduleID s;
 	Win::FileDlg dlg;
+	int ss;
 	dlg.Clear();
 	dlg.SetFilter(L"Archivos Excel(*.xlsx)\0*.xlsx\0\0",0,L"xlsx");
 	if(dlg.BeginDialog(hWnd,L"Exportar a Excel",true))
@@ -47,7 +48,8 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 		this->MessageBox(L"No fue posible exportar la informacion",L"Exportar a Excel",MB_OK|MB_ICONERROR);
 		return;
 	}
-	Sys::Format(cmd, L"SELECT pt.professor_id, pt.course_id, pt.classroom_id, pt.grupo, c.classhours FROM perturbation pt, course c WHERE c.course_id=pt.course_id");
+	
+	Sys::Format(cmd, L"SELECT pt.professor_id, pt.course_id, pt.classroom_id, pt.grupo, c.week_hours FROM perturbation pt, course c WHERE c.course_id=pt.course_id");
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
@@ -59,30 +61,21 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 		conn.BindColumn(5, s.classhours);
 		while(conn.Fetch())
 			schedule.push_back(s);
-		makeRandoms();
-		for(int i=0;i<schedule.size();i++)
+		
+		ss=schedule.size();
+
+		for(int i=0; i<ss;i++)
 		{
-			if(schedule[i].classhours==6)
-			{
-				Sys::Format(cmd, L"SELECT DATEADD(day,%d,end_date) FROM period WHERE period_id=%d",schedule[i].onetwo,period_id);
-				conn.GetString(cmd, schedule[i].periodDateEnd, 25);
-				
-			}
-			else
-			{
-				Sys::Format(cmd, L"SELECT DATEADD(day,-3,end_date) FROM period WHERE period_id=%d",schedule[i].onetwo,period_id);
-				conn.GetString(cmd, schedule[i].periodDateEnd, 25);
-			}
-
+			Sys::Format(cmd, L"INSERT INTO schedule (professor_id, course_id, grupo, classroom_id, period_id) VALUES(%d,%d,'%c',%d, %d)",schedule[i].professor_id,schedule[i].course_id,schedule[i].grupo[0], schedule[i].classroom_id,period_id);
+			conn.ExecuteNonQuery(cmd);
 		}
-
-		for(int i=0; i<schedule.size();i++)
-			Sys::Format(cmd, L"INSERT INTO schedule (professor_id, course_id, grupo, classroom_id, period_id, date_final_exam VALUES(%d,%d,'%c',%d, %d,'%s')",schedule[i].professor_id,schedule[i].course_id,schedule[i].grupo[0], schedule[i].classroom_id,period_id,schedule[i].periodDateEnd);
+		 
 		conn.CloseSession();
 	}
 
 	catch(Sql::SqlException e)
 	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 
 	this->EndDialog(TRUE);
@@ -93,11 +86,4 @@ void ScheduleDlg::btCancel_Click(Win::Event& e)
 	this->EndDialog(FALSE);
 }
 
-void ScheduleDlg::makeRandoms(void)
-{
-	std::tr1::uniform_int<int> asignDay(1, 2);
-	int solSize=schedule.size();
-	for(int i=0;i<solSize;i++)
-		schedule[i].onetwo=-4/asignDay(Math::Statistics::random_generator);
-	
-}
+
