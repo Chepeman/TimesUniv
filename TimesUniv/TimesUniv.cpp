@@ -365,6 +365,12 @@ void TimesUniv::btGenerate_Click(Win::Event& e)
 }
 void TimesUniv::btExport_Click(Win::Event& e)
 {
+	ScheduleDlg dlg;
+	const int period=ddPeriod.GetSelectedIndex();
+	if(period<0)return;
+	int period_id=ddPeriod.GetSelectedData();
+	dlg.period_id=period_id;
+	dlg.BeginDialog(hWnd);
 }
 
 void TimesUniv::loadAssignments()
@@ -511,7 +517,7 @@ void TimesUniv::lvProposal_DblClk(Win::Event& e)
 	int period_id=ddPeriod.GetSelectedData();
 	EditCourseDlg dlg;
 	index=lvProposal.GetSelectedIndex();
-	if(index<=0) return;
+	if(index<0) return;
 	if(idsol[index].course<=0) return;
 	dlg.professor_id=idsol[index].professor;
 	dlg.course_id=idsol[index].course;

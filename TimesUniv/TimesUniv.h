@@ -6,6 +6,7 @@
 #include "ListViewsDlg.h"
 #include "CoordMng.h"
 #include "EditCourseDlg.h"
+#include "ScheduleDlg.h"
 
 #define MAIN_TIMER 1
 

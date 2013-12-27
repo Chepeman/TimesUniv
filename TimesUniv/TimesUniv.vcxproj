@@ -119,6 +119,7 @@
     <ClInclude Include="ProfDlg.h" />
     <ClInclude Include="ProgramDlg.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ScheduleDlg.h" />
     <ClInclude Include="Solution.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -140,6 +141,7 @@
     <ClCompile Include="PeriodDlg.cpp" />
     <ClCompile Include="ProfDlg.cpp" />
     <ClCompile Include="ProgramDlg.cpp" />
+    <ClCompile Include="ScheduleDlg.cpp" />
     <ClCompile Include="Solution.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
