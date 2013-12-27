@@ -110,11 +110,24 @@ void CoordMng::btDelete_Click(Win::Event& e)
 
 	Sql::SqlConnection conn;
 	wstring cmd;
-	
+	int coord_id=0;
+
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 		//conn.OpenSession(hWnd, CONNECTION_STRING);
+
+		Sys::Format(cmd,L"SELECT coordinator_id FROM coordinator WHERE program_id=%d",career_id);
+		coord_id=conn.GetInt(cmd);
+
+		Sys::Format(cmd,L"SELECT property FROM assignment WHERE course_id=%d AND professor_id=%d AND period_id=%d AND grupo='%c'",
+		assign[index].course_id,assign[index].professor_id,assign[index].period_id,assign[index].group[0]);
+		if(coord_id!=conn.GetInt(cmd))
+		{
+			this->MessageBox(L"You're not allowed to delete this record", L"Error", MB_OK | MB_ICONERROR);
+			return;
+		}
+
 		Sys::Format(cmd,L"DELETE FROM assignment WHERE course_id=%d AND professor_id=%d AND period_id=%d AND grupo='%c'",
 		assign[index].course_id,assign[index].professor_id,assign[index].period_id,assign[index].group[0]);
 		int rows = conn.ExecuteNonQuery(cmd);

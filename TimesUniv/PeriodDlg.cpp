@@ -29,7 +29,6 @@ void PeriodDlg::Window_Open(Win::Event& e)
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 }
-
 void PeriodDlg::btOK_Click(Win::Event& e)
 {
 	//_____________________________________________________________ Validate
@@ -63,7 +62,6 @@ void PeriodDlg::btOK_Click(Win::Event& e)
 	}
 	this->EndDialog(TRUE);
 }
-
 void PeriodDlg::btCancel_Click(Win::Event& e)
 {
 	this->EndDialog(FALSE);
