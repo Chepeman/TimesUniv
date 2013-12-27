@@ -18,10 +18,10 @@ void CoordMng::Window_Open(Win::Event& e)
 		conn.OpenSession(DSN,USERNAME,PASSWORD);
 		Sys::Format(cmd,L"SELECT p.professor_id,p.last_name_p+' '+p.last_name_m+', '+p.name,p.email,p.extension FROM professor p, program pr, department d \
 						 WHERE p.department_id=d.department_id AND d.department_id=pr.department_id AND pr.program_id=%d ",career_id);
-			conn.ExecuteSelect(cmd, 100, lvProfessor);
+		conn.ExecuteSelect(cmd, 100, lvProfessor);
 		Sys::Format(cmd,L"SELECT c.course_id, c.course_key, c.descr FROM course c, prog_course pc, program p WHERE c.course_id=pc.course_id AND pc.program_id=p.program_id AND pc.program_id=%d",career_id);
-			conn.ExecuteSelect(cmd, 100, lvCourse);
-			conn.ExecuteSelect(L"SELECT * FROM period ORDER BY period_id DESC", 100, ddPeriod);
+		conn.ExecuteSelect(cmd, 100, lvCourse);
+		conn.ExecuteSelect(L"SELECT * FROM period ORDER BY period_id DESC", 100, ddPeriod);
 	}
 	catch (Sql::SqlException e)
 	{
@@ -107,17 +107,30 @@ void CoordMng::btDelete_Click(Win::Event& e)
 
 	Sql::SqlConnection conn;
 	wstring cmd;
-	Sys::Format(cmd,L"DELETE FROM assignment WHERE course_id=%d AND professor_id=%d AND period_id=%d AND grupo='%c'",
-		assign[index].course_id,assign[index].professor_id,assign[index].period_id,assign[index].group[0]);
+	
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 		//conn.OpenSession(hWnd, CONNECTION_STRING);
+		Sys::Format(cmd,L"DELETE FROM assignment WHERE course_id=%d AND professor_id=%d AND period_id=%d AND grupo='%c'",
+		assign[index].course_id,assign[index].professor_id,assign[index].period_id,assign[index].group[0]);
 		int rows = conn.ExecuteNonQuery(cmd);
 		if (rows!=1)
 		{
-			this->MessageBox(L"Registration could not be admitted", L"Error", MB_OK | MB_ICONERROR);
+			this->MessageBox(L"Delete could not be admitted", L"Error", MB_OK | MB_ICONERROR);
 			return;
+		}
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM perturbation WHERE course_id=%d AND grupo='%c'",assign[index].course_id,assign[index].group[0]);
+		rows = conn.GetInt(cmd);
+		if (rows==1)
+		{
+			Sys::Format(cmd,L"DELETE FROM perturbation WHERE course_id=%d AND grupo='%c'",assign[index].course_id,assign[index].group[0]);
+			int rows = conn.ExecuteNonQuery(cmd);
+			if (rows!=1)
+			{
+				this->MessageBox(L"Delete could not be admitted on perturbation", L"Error", MB_OK | MB_ICONERROR);
+				return;
+			}
 		}
 	}
 	catch (Sql::SqlException e)
