@@ -39,7 +39,7 @@ void CoordMng::btAdd_Click(Win::Event& e)
 {
 	wstring cmd;
 	char group='A';
-	int course_id,professor_id,period_id,cupo,no_groups,rows;
+	int course_id,professor_id,period_id,cupo,no_groups,rows,coord_id;
 
 	const int course=lvCourse.GetSelectedIndex();
 	if(course<0)
@@ -82,8 +82,11 @@ void CoordMng::btAdd_Click(Win::Event& e)
 		no_groups=conn.GetInt(cmd);
 
 		group+=no_groups;
+
+		Sys::Format(cmd,L"SELECT coordinator_id FROM coordinator WHERE program_id=%d",career_id);
+		coord_id=conn.GetInt(cmd);
 		
-		Sys::Format(cmd,L"INSERT INTO assignment VALUES(%d,%d,%d,%d,'%c')",course_id,professor_id,period_id,cupo,group);
+		Sys::Format(cmd,L"INSERT INTO assignment VALUES(%d,%d,%d,%d,'%c',%d)",course_id,professor_id,period_id,cupo,group,coord_id);
 		rows = conn.ExecuteNonQuery(cmd);
 		if (rows!=1)
 		{
