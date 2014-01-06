@@ -42,16 +42,16 @@ void CoordDlg::Window_Open(Win::Event& e)
 void CoordDlg::btOK_Click(Win::Event& e)
 {
 	//_____________________________________________________________ Validate
-	tr1::wregex regextbxUsername(L"[A-Za-z0-9]+");
+	tr1::wregex regextbxUsername(L"[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]+");
 	if (tr1::regex_match(tbxUsername.Text, regextbxUsername) == false)
 	{
-		tbxUsername.ShowBalloonTip(L"Invalid Username", L"Please provide one or more characters", TTI_ERROR);
+		tbxUsername.ShowBalloonTip(L"Invalid Username", L"Please provide four or more alphanumeric characters (A-Z, a-z or 0-9)", TTI_ERROR);
 		return;
 	}
-	tr1::wregex regextbxPass(L"[A-Za-z0-9]+");
+	tr1::wregex regextbxPass(L"[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]+");
 	if (tr1::regex_match(tbxPass.Text, regextbxPass) == false)
 	{
-		tbxPass.ShowBalloonTip(L"Invalid Pass", L"Please provide one or more characters", TTI_ERROR);
+		tbxPass.ShowBalloonTip(L"Invalid Pass", L"Please provide three or more alphanumeric characters (A-Z, a-z or 0-9)", TTI_ERROR);
 		return;
 	}
 	Sql::StringBuilder sb(L"coordinator", L"coordinator_id", coordinator_id);

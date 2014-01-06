@@ -55,18 +55,18 @@ void CourseDlg::Window_Open(Win::Event& e)
 void CourseDlg::btOK_Click(Win::Event& e)
 {
 	//_____________________________________________________________ Validate
-	/*tr1::wregex regextbxCourse_key(L"[A-Za-z0-9]+");
+	tr1::wregex regextbxCourse_key(L"[A-Z0-9\.]+");
 	if (tr1::regex_match(tbxCourse_key.Text, regextbxCourse_key) == false)
 	{
-		tbxCourse_key.ShowBalloonTip(L"Invalid Course key", L"Please provide one or more characters", TTI_ERROR);
+		tbxCourse_key.ShowBalloonTip(L"Invalid Course key", L"Can only use capital letters, numbers and dots", TTI_ERROR);
 		return;
 	}
-	tr1::wregex regextbxDescr(L"[A-Za-z0-9]+");
+	tr1::wregex regextbxDescr(L"[A-Z0-9аимсз\\s]+");
 	if (tr1::regex_match(tbxDescr.Text, regextbxDescr) == false)
 	{
-		tbxDescr.ShowBalloonTip(L"Invalid Descr", L"Please provide one or more characters", TTI_ERROR);
+		tbxDescr.ShowBalloonTip(L"Invalid Description", L"Can only use capital letters andno numbers", TTI_ERROR);
 		return;
-	}*/
+	}
 	Sql::StringBuilder sb(L"course", L"course_id", course_id);
 	sb.Bind(L"course_key", tbxCourse_key);
 	sb.Bind(L"descr", tbxDescr);

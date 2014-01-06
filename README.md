@@ -1,4 +1,4 @@
-TimesUniv
+﻿TimesUniv
 =========
 
 Cosas por checar:
@@ -9,4 +9,5 @@ Cosas por checar:
 -Checar períodos
 -Checar materias de área básica
 -Página web
+-Distincion de mayusculas y minusculas en login
 Times University

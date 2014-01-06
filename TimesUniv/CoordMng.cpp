@@ -37,6 +37,13 @@ void CoordMng::Window_Close(Win::Event& e)
 }
 void CoordMng::btAdd_Click(Win::Event& e)
 {
+	//_____________________________________________________________ Validate
+	tr1::wregex regextbxCupo(L"[1-9][0-9]?");
+	if (tr1::regex_match(tbxCupo.Text, regextbxCupo) == false)
+	{
+		tbxCupo.ShowBalloonTip(L"Invalid Quota", L"Please provide a number between 1 and 99", TTI_ERROR);
+		return;
+	}
 	wstring cmd;
 	char group='A';
 	int course_id,professor_id,period_id,cupo,no_groups,rows,coord_id;

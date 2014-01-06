@@ -34,12 +34,24 @@ void ClassroomDlg::Window_Open(Win::Event& e)
 void ClassroomDlg::btOK_Click(Win::Event& e)
 {
 	//_____________________________________________________________ Validate
-	/*tr1::wregex regextbxDescr(L"[A-Za-z0-9]+");
+	tr1::wregex regextbxDescr(L"[A-Za-z0-9]+");
 	if (tr1::regex_match(tbxDescr.Text, regextbxDescr) == false)
 	{
 		tbxDescr.ShowBalloonTip(L"Invalid Descr", L"Please provide one or more characters", TTI_ERROR);
 		return;
-	}*/
+	}
+	tr1::wregex regextbxContact_count(L"[1-9][0-9]?");
+	if (tr1::regex_match(tbxContact_count.Text, regextbxContact_count) == false)
+	{
+		tbxContact_count.ShowBalloonTip(L"Invalid Contact Count", L"Please provide a number between 1 and 99", TTI_ERROR);
+		return;
+	}
+	tr1::wregex regextbxSeat_count(L"[1-9][0-9]?");
+	if (tr1::regex_match(tbxSeat_count.Text, regextbxSeat_count) == false)
+	{
+		tbxSeat_count.ShowBalloonTip(L"Invalid Seat Count", L"Please provide a number between 1 and 99", TTI_ERROR);
+		return;
+	}
 	Sql::StringBuilder sb(L"classroom", L"classroom_id", classroom_id);
 	sb.Bind(L"descr", tbxDescr);
 	sb.Bind(L"contact_count", tbxContact_count);
