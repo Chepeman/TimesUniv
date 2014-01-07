@@ -2,11 +2,17 @@
 =========
 
 Cosas por checar:
-- Personalizar errores y candados
-- Checar períodos faltantes
 - Página web
+- Personalizar errores y candados
+
+Sergio:
+- REGEX
+- Mensaje de materia existente CoordMng
+- Checar profesores de área básica faltantes
 - Distincion de mayusculas y minusculas en login
 - Acomodar EditCourseDlg y ScheduleDlg
-- REGEX
-- Checar profesores de área básica faltantes
-- Mensaje de materia existente CoordMng
+- Checar períodos faltantes CoordMng
+
+Chepe:
+- Altas y bajas
+- Checar períodos faltantes lvAssignment
