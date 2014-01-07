@@ -371,6 +371,7 @@ void TimesUniv::btExport_Click(Win::Event& e)
 	int period_id=ddPeriod.GetSelectedData();
 	dlg.period_id=period_id;
 	dlg.BeginDialog(hWnd);
+	loadProposals();
 }
 
 void TimesUniv::loadAssignments()
@@ -454,7 +455,7 @@ void TimesUniv::loadProposals() //finish this function
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 
-	if(count<0)
+	if(count<1)
 	{
 		CoursesID IDs;
 		idsol.clear();
@@ -534,16 +535,13 @@ void TimesUniv::loadProposals() //finish this function
 									WHEN 2 THEN 'Thu-Tue'\
 								END,\
 								CONVERT(varchar(15),cte.begin_time,100) + ' - ' + CONVERT(varchar(15),cte.end_time,100), s.grupo\
-						  FROM course c,professor p, classroom cl, week_day w, course_time ct, classtime cte, schedule s\
+						  FROM course c,professor p, classroom cl, week_day w, classtime cte, schedule s\
 						  WHERE c.course_id=s.course_id\
 								AND p.professor_id=s.professor_id\
 								AND cl.classroom_id=s.classroom_id\
-								AND c.course_id=ct.course_id\
-								AND w.week_day_id=ct.week_day_id\
 								AND w.week_day_id=s.week_day_id\
-								AND cte.classtime_id=ct.classtime_id\
 								AND w.week_day_id BETWEEN 1 AND 2\
-								AND ct.grupo=s.grupo\
+								AND s.classtime_id=cte.classtime_id\
 								AND s.period_id=%d ORDER BY c.course_id, s.grupo", period_id);
 		try
 		{

@@ -8,7 +8,7 @@ void ScheduleDlg::Window_Open(Win::Event& e)
 	Sql::SqlConnection conn;
 	try
 	{
-		lvSchedule.Cols.Add(0,LVCFMT_LEFT, 100, L"Clave de Prog");
+		lvSchedule.Cols.Add(0,LVCFMT_LEFT, 100, L"Clave de seloseProg");
 		lvSchedule.Cols.Add(1,LVCFMT_LEFT, 100, L"Clave de Mat");
 		lvSchedule.Cols.Add(2,LVCFMT_LEFT, 100, L"Materia");
 		lvSchedule.Cols.Add(3,LVCFMT_LEFT, 100, L"Lunes");
