@@ -457,6 +457,7 @@ void TimesUniv::loadProposals() //finish this function
 
 	if(count<1)
 	{
+		isCLickleable=true;
 		CoursesID IDs;
 		idsol.clear();
 		lvProposal.SetRedraw(false);
@@ -519,6 +520,7 @@ void TimesUniv::loadProposals() //finish this function
 	}
 	else
 	{
+		isCLickleable=false;
 		lvProposal.SetRedraw(false);
 		lvProposal.Items.DeleteAll();
 		lvProposal.Cols.DeleteAll();
@@ -574,6 +576,7 @@ void TimesUniv::lvProposal_ColumnClick(Win::Event& e)
 }
 void TimesUniv::lvProposal_DblClk(Win::Event& e)
 {
+	if(isCLickleable==false) return;
 	int index=-1;
 	const int period=ddPeriod.GetSelectedIndex();
 	if(period<0)return;

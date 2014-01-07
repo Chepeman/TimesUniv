@@ -24,6 +24,7 @@ class TimesUniv: public Win::Window
 public:
 	TimesUniv()
 	{
+		
 	}
 	~TimesUniv()
 	{
@@ -40,6 +41,7 @@ public:
 	const wchar_t * GetClassName(){return L"TIMESUNIV";}
 	int checkImage(int course, char group);
 	wstring checkErrorDescription(int course, char group);
+	bool isCLickleable;
 protected:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
 	Win::Toolbar toolbMain;
