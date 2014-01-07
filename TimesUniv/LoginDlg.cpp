@@ -8,8 +8,6 @@ void LoginDlg::Window_Open(Win::Event& e)
 	//________________________________________________________ imgUG
 	//imgUG.FileName=L"C:\\Users\\BrYt3 KaTz3\\Dropbox\\Marikillas\\TimesUniv\\TimesUniv\\UG.png";
 	imgUG.FileName=L"C:\\Users\\JCarlos\\Dropbox\\Marikillas\\TimesUniv\\TimesUniv\\UG.png";
-	//imgUG.FileName=L"C:\\Users\\WeRiChCh\\Dropbox\\Marikillas\\TimesUniv\\TimesUniv\\UG.jpg";
-	//imgUG.FileName=L"C:\\Users\\JCarlos\\Documents\\Visual Studio 2012\\Projects\\TimesUniv\\TimesUniv\\UG.png";
 	this->Text=L"Welcome";
 	this->AlwaysOnTop(true);
 }

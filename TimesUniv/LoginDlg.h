@@ -27,7 +27,7 @@ protected:
 	{
 		dlgTemplate.cx = Sys::Convert::PixelToDlgUnitX(361);
 		dlgTemplate.cy = Sys::Convert::PixelToDlgUnitY(464);
-		dlgTemplate.style = WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_VISIBLE | DS_CENTER | DS_MODALFRAME;
+		dlgTemplate.style = WS_CAPTION | WS_MINIMIZEBOX | WS_POPUP | WS_SYSMENU | WS_VISIBLE | DS_CENTER | DS_MODALFRAME;
 	}
 	//_________________________________________________
 	void InitializeGui()

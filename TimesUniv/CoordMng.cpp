@@ -4,6 +4,7 @@
 void CoordMng::Window_Open(Win::Event& e)
 {
 	this->AlwaysOnTop(true);
+	int dept;
 	wstring cmd;
 	//________________________________________________________ lvProfessor
 	lvProfessor.Cols.Add(0, LVCFMT_LEFT, 250, L"Name");
@@ -16,8 +17,17 @@ void CoordMng::Window_Open(Win::Event& e)
 	{
 		Sql::SqlConnection conn;
 		conn.OpenSession(DSN,USERNAME,PASSWORD);
-		Sys::Format(cmd,L"SELECT p.professor_id,p.last_name_p+' '+p.last_name_m+', '+p.name,p.email,p.extension FROM professor p, program pr, department d \
-						 WHERE p.department_id=d.department_id AND d.department_id=pr.department_id AND pr.program_id=%d ",career_id);
+		Sys::Format(cmd,L"SELECT department_id FROM program WHERE program_id=%d",career_id);
+		dept=conn.GetInt(cmd);
+		if(dept!=1)
+		{
+			Sys::Format(cmd,L"SELECT p.professor_id,p.last_name_p+' '+p.last_name_m+', '+p.name,p.email,p.extension FROM professor p, program pr, department d \
+						 WHERE p.department_id=d.department_id AND d.department_id=pr.department_id AND pr.program_id=%d ORDER BY p.last_name_p",career_id);
+		}
+		else
+		{
+			Sys::Format(cmd,L"SELECT p.professor_id,p.last_name_p+' '+p.last_name_m+', '+p.name,p.email,p.extension FROM professor p ORDER BY p.last_name_p");
+		}
 		conn.ExecuteSelect(cmd, 100, lvProfessor);
 		Sys::Format(cmd,L"SELECT c.course_id, c.course_key, c.descr FROM course c, prog_course pc, program p WHERE c.course_id=pc.course_id AND pc.program_id=p.program_id AND pc.program_id=%d",career_id);
 		conn.ExecuteSelect(cmd, 100, lvCourse);
@@ -41,7 +51,7 @@ void CoordMng::btAdd_Click(Win::Event& e)
 	tr1::wregex regextbxCupo(L"[1-9][0-9]?");
 	if (tr1::regex_match(tbxCupo.Text, regextbxCupo) == false)
 	{
-		tbxCupo.ShowBalloonTip(L"Invalid Quota", L"Please provide a number between 1 and 99", TTI_ERROR);
+		tbxCupo.ShowBalloonTip(L"Invalid Quota", L"Please provide a number between 5 and 99", TTI_ERROR);
 		return;
 	}
 	wstring cmd;
@@ -72,9 +82,9 @@ void CoordMng::btAdd_Click(Win::Event& e)
 	}
 	period_id=ddPeriod.GetSelectedData();
 
-	cupo=tbxCupo.GetInt();
+	cupo=tbxCupo.GetInt(); 
 	if(cupo<5 || cupo==0)
-	{
+	{ 
 		tbxCupo.ShowBalloonTip(L"Invalid Quota", L"The quota must be greater than 5", TTI_ERROR);
 		return;
 	}
