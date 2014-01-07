@@ -2,13 +2,11 @@
 =========
 
 Cosas por checar:
--Acomodar error
--Checar períodos
--Página web
--Distincion de mayusculas y minusculas en login
-Times University
-
-Sergio:
--Acomodar EditCourseDlg y ScheduleDlg
--REGEX
--Checar materias de área básica
+- Personalizar errores y candados
+- Checar períodos faltantes
+- Página web
+- Distincion de mayusculas y minusculas en login
+- Acomodar EditCourseDlg y ScheduleDlg
+- REGEX
+- Checar profesores de área básica faltantes
+- Mensaje de materia existente CoordMng
