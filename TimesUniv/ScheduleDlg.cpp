@@ -49,7 +49,7 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 		return;
 	}
 	
-	Sys::Format(cmd, L"SELECT pt.professor_id, pt.course_id, pt.classroom_id, pt.grupo,  ct.classtime_id, ct.week_day_id FROM perturbation pt, course c, course_time ct WHERE c.course_id=pt.course_id  AND c.course_id=ct.course_id;");
+	Sys::Format(cmd, L"SELECT pt.professor_id, pt.course_id, pt.classroom_id, pt.grupo,  ct.classtime_id, ct.week_day_id FROM perturbation pt, course c, course_time ct WHERE c.course_id=pt.course_id  AND c.course_id=ct.course_id AND pt.grupo=ct.grupo;");
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
@@ -70,7 +70,13 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 			Sys::Format(cmd, L"INSERT INTO schedule (period_id, professor_id, course_id, grupo, classroom_id, classtime_id, week_day_id) VALUES(%d,%d,%d,'%c',%d, %d, %d)",period_id,schedule[i].professor_id,schedule[i].course_id,schedule[i].grupo[0], schedule[i].classroom_id, schedule[i].classtime, schedule[i].week_day);
 			conn.ExecuteNonQuery(cmd);
 		}
-		 
+
+		Sys::Format(cmd,L"DELETE FROM perturbation");
+		conn.ExecuteSelect(cmd);
+	    Sys::Format(cmd,L"DELETE FROM course_time");
+		conn.ExecuteSelect(cmd);
+		Sys::Format(cmd,L"DELETE FROM assignment");
+		conn.ExecuteSelect(cmd);
 		conn.CloseSession();
 	}
 

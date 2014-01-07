@@ -435,65 +435,128 @@ void TimesUniv::loadAssignments()
 }
 void TimesUniv::loadProposals() //finish this function
 {
-	CoursesID IDs;
-	idsol.clear();
-	lvProposal.SetRedraw(false);
-	lvProposal.Items.DeleteAll();
-	lvProposal.Cols.DeleteAll();
-	lvProposal.Cols.Add(0, LVCFMT_LEFT, 90, L"Course Key");
-	lvProposal.Cols.Add(1, LVCFMT_LEFT, 230, L"Course");
-	lvProposal.Cols.Add(2, LVCFMT_LEFT, 200, L"Professor");
-	lvProposal.Cols.Add(3, LVCFMT_LEFT, 70,  L"Classroom");
-	lvProposal.Cols.Add(4, LVCFMT_LEFT, 80,  L"Days");
-	lvProposal.Cols.Add(5, LVCFMT_LEFT, 150,  L"Classtime");
-	lvProposal.Cols.Add(6, LVCFMT_LEFT, 70,  L"Group");
-	lvProposal.SetImageList(imageList,true);
+	int count=-1;
 	Sql::SqlConnection conn;
 	wstring cmd;
-	Sys::Format(cmd,L"SELECT c.course_key,c.descr,p.last_name_p+' '+p.last_name_m+', '+p.name,cl.descr,\
-							CASE w.week_day_id\
-								WHEN 1 THEN 'Mon-Wen-Fri'\
-								WHEN 2 THEN 'Thu-Tue'\
-							END,\
-							CONVERT(varchar(15),cte.begin_time,100) + ' - ' + CONVERT(varchar(15),cte.end_time,100), pt.grupo\
-					  FROM course c,professor p, classroom cl, week_day w, course_time ct, classtime cte, perturbation pt\
-					  WHERE c.course_id=pt.course_id\
-							AND p.professor_id=pt.professor_id\
-							AND cl.classroom_id=pt.classroom_id\
-							AND c.course_id=ct.course_id\
-							AND w.week_day_id=ct.week_day_id\
-							AND cte.classtime_id=ct.classtime_id\
-							AND w.week_day_id BETWEEN 1 AND 2\
-							AND ct.grupo=pt.grupo ORDER BY c.course_id, pt.grupo");
+	const int period=ddPeriod.GetSelectedIndex();
+	if(period<0)return;
+	int period_id=ddPeriod.GetSelectedData();
+
 	try
 	{
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period_id);
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
-		conn.ExecuteSelect(cmd,100,lvProposal);
-		Sys::Format(cmd, L"SELECT course_id, professor_id, classroom_id, grupo FROM perturbation ORDER BY course_id, grupo");
-		conn.ExecuteSelect(cmd);
-		conn.BindColumn(1,IDs.course);
-		conn.BindColumn(2,IDs.professor);
-		conn.BindColumn(3,IDs.classroom);
-		conn.BindColumn(4, IDs.group,2);
-		while(conn.Fetch())
-		{
-			idsol.push_back(IDs);
-		}
+		count=conn.GetInt(cmd);
 		conn.CloseSession();
-		
 	}
-	catch (Sql::SqlException e)
+	catch(Sql::SqlException e)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 
-	int resultCheck=-1;
-	//Putting the images
-	int idsolSize=idsol.size();
-	for(int i=0;i<idsolSize;i++)
+	if(count<0)
 	{
-		resultCheck=checkImage(idsol[i].course, (char)idsol[i].group[0]);
-		lvProposal.Items[i].SetImageIndex(resultCheck);
+		CoursesID IDs;
+		idsol.clear();
+		lvProposal.SetRedraw(false);
+		lvProposal.Items.DeleteAll();
+		lvProposal.Cols.DeleteAll();
+		lvProposal.Cols.Add(0, LVCFMT_LEFT, 90, L"Course Key");
+		lvProposal.Cols.Add(1, LVCFMT_LEFT, 230, L"Course");
+		lvProposal.Cols.Add(2, LVCFMT_LEFT, 200, L"Professor");
+		lvProposal.Cols.Add(3, LVCFMT_LEFT, 70,  L"Classroom");
+		lvProposal.Cols.Add(4, LVCFMT_LEFT, 80,  L"Days");
+		lvProposal.Cols.Add(5, LVCFMT_LEFT, 150,  L"Classtime");
+		lvProposal.Cols.Add(6, LVCFMT_LEFT, 70,  L"Group");
+		lvProposal.SetImageList(imageList,true);
+		Sys::Format(cmd,L"SELECT c.course_key,c.descr,p.last_name_p+' '+p.last_name_m+', '+p.name,cl.descr,\
+								CASE w.week_day_id\
+									WHEN 1 THEN 'Mon-Wen-Fri'\
+									WHEN 2 THEN 'Thu-Tue'\
+								END,\
+								CONVERT(varchar(15),cte.begin_time,100) + ' - ' + CONVERT(varchar(15),cte.end_time,100), pt.grupo\
+						  FROM course c,professor p, classroom cl, week_day w, course_time ct, classtime cte, perturbation pt\
+						  WHERE c.course_id=pt.course_id\
+								AND p.professor_id=pt.professor_id\
+								AND cl.classroom_id=pt.classroom_id\
+								AND c.course_id=ct.course_id\
+								AND w.week_day_id=ct.week_day_id\
+								AND cte.classtime_id=ct.classtime_id\
+								AND w.week_day_id BETWEEN 1 AND 2\
+								AND ct.grupo=pt.grupo ORDER BY c.course_id, pt.grupo");
+		try
+		{
+			conn.OpenSession(DSN, USERNAME, PASSWORD);
+			conn.ExecuteSelect(cmd,100,lvProposal);
+			Sys::Format(cmd, L"SELECT course_id, professor_id, classroom_id, grupo FROM perturbation ORDER BY course_id, grupo");
+			conn.ExecuteSelect(cmd);
+			conn.BindColumn(1,IDs.course);
+			conn.BindColumn(2,IDs.professor);
+			conn.BindColumn(3,IDs.classroom);
+			conn.BindColumn(4, IDs.group,2);
+			while(conn.Fetch())
+			{
+				idsol.push_back(IDs);
+			}
+			conn.CloseSession();
+		
+		}
+		catch (Sql::SqlException e)
+		{
+			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		}
+
+		int resultCheck=-1;
+		//Putting the images
+		int idsolSize=idsol.size();
+		for(int i=0;i<idsolSize;i++)
+		{
+			resultCheck=checkImage(idsol[i].course, (char)idsol[i].group[0]);
+			lvProposal.Items[i].SetImageIndex(resultCheck);
+		}
+		btGenerate.SetEnable(true);
+	}
+	else
+	{
+		lvProposal.SetRedraw(false);
+		lvProposal.Items.DeleteAll();
+		lvProposal.Cols.DeleteAll();
+		lvProposal.Cols.Add(0, LVCFMT_LEFT, 90, L"Course Key");
+		lvProposal.Cols.Add(1, LVCFMT_LEFT, 230, L"Course");
+		lvProposal.Cols.Add(2, LVCFMT_LEFT, 200, L"Professor");
+		lvProposal.Cols.Add(3, LVCFMT_LEFT, 70,  L"Classroom");
+		lvProposal.Cols.Add(4, LVCFMT_LEFT, 80,  L"Days");
+		lvProposal.Cols.Add(5, LVCFMT_LEFT, 150,  L"Classtime");
+		lvProposal.Cols.Add(6, LVCFMT_LEFT, 70,  L"Group");
+		Sys::Format(cmd,L"SELECT c.course_key,c.descr,p.last_name_p+' '+p.last_name_m+', '+p.name,cl.descr,\
+								CASE w.week_day_id\
+									WHEN 1 THEN 'Mon-Wen-Fri'\
+									WHEN 2 THEN 'Thu-Tue'\
+								END,\
+								CONVERT(varchar(15),cte.begin_time,100) + ' - ' + CONVERT(varchar(15),cte.end_time,100), s.grupo\
+						  FROM course c,professor p, classroom cl, week_day w, course_time ct, classtime cte, schedule s\
+						  WHERE c.course_id=s.course_id\
+								AND p.professor_id=s.professor_id\
+								AND cl.classroom_id=s.classroom_id\
+								AND c.course_id=ct.course_id\
+								AND w.week_day_id=ct.week_day_id\
+								AND w.week_day_id=s.week_day_id\
+								AND cte.classtime_id=ct.classtime_id\
+								AND w.week_day_id BETWEEN 1 AND 2\
+								AND ct.grupo=s.grupo\
+								AND s.period_id=%d ORDER BY c.course_id, s.grupo", period_id);
+		try
+		{
+			conn.OpenSession(DSN, USERNAME, PASSWORD);
+			conn.ExecuteSelect(cmd,100,lvProposal);
+			conn.CloseSession();
+		}
+		catch (Sql::SqlException e)
+		{
+			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		}
+		btGenerate.SetEnable(false);
+
 	}
 	lvProposal.SetRedraw(true);
 }
@@ -501,6 +564,8 @@ void TimesUniv::loadProposals() //finish this function
 void TimesUniv::ddPeriod_SelChange(Win::Event& e)
 {
 	loadAssignments();
+	loadProposals();
+
 }
 void TimesUniv::ddCareer_SelChange(Win::Event& e)
 {

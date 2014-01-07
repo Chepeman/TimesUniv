@@ -6,8 +6,9 @@ struct ScheduleID //Needs to be modified, adding the quota and professor hours
 	int professor_id;
 	int course_id;
 	int classroom_id;
-	int classhours;
 	wchar_t grupo[2];
+	int classtime;
+	int week_day;
 	
 };
 class ScheduleDlg: public Win::Dialog
