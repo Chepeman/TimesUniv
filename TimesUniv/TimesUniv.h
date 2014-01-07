@@ -117,6 +117,7 @@ protected:
 	void Cmd_Period(Win::Event& e);
 	void Cmd_Classroom(Win::Event& e);
 	void Cmd_Classtime(Win::Event& e);
+	void Cmd_Updown(Win::Event& e);
 	//_________________________________________________
 	bool EventHandler(Win::Event& e)
 	{
@@ -135,6 +136,7 @@ protected:
 		if (this->IsEvent(e, IDM_PERIOD)) {Cmd_Period(e); return true;}
 		if (this->IsEvent(e, IDM_CLASSROOM)) {Cmd_Classroom(e); return true;}
 		if (this->IsEvent(e, IDM_CLASSTIME)) {Cmd_Classtime(e); return true;}
+		if (this->IsEvent(e, IDM_UPDOWN)) {Cmd_Updown(e); return true;}
 		return false;
 	}
 };

@@ -35,6 +35,7 @@
 #define IDI_PROFESSOR                   158
 #define IDI_ICON1                       161
 #define IDI_VOID                        161
+#define IDI_UPDOWN                      162
 #define IDM_ABOUT                       32771
 #define IDM_EXIT                        32772
 #define IDM_PRINT                       32773
@@ -59,14 +60,16 @@
 #define IDM_PERIOD                      32791
 #define IDM_CLASSROOM                   32792
 #define IDM_CLASSTIME                   32793
+#define ID_UPDOWN                       32795
+#define IDM_UPDOWN                      32795
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        162
-#define _APS_NEXT_COMMAND_VALUE         32795
+#define _APS_NEXT_RESOURCE_VALUE        164
+#define _APS_NEXT_COMMAND_VALUE         32797
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

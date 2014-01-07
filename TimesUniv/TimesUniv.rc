@@ -56,6 +56,7 @@ IDI_DEPT                ICON                    "dept.ico"
 IDI_PERIOD              ICON                    "period.ico"
 IDI_PROFESSOR           ICON                    "professor.ico"
 IDI_VOID                ICON                    "ico00001.ico"
+IDI_UPDOWN              ICON                    "C:\\Users\\BrYt3 KaTz3\\Documents\\GitHub\\TimesUniv\\TimesUniv\\updown.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -99,13 +100,14 @@ END
 
 IDC_TIMESUNIV ACCELERATORS
 BEGIN
+    "u",            IDM_UPDOWN,             ASCII,  ALT, NOINVERT
     "/",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
     "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
     VK_RETURN,      IDM_CAREER,             VIRTKEY, NOINVERT
     VK_RETURN,      IDM_CLASSROOM,          VIRTKEY, NOINVERT
     VK_RETURN,      IDM_CLASSTIME,          VIRTKEY, NOINVERT
-    "c",            IDM_COPY,               ASCII,  ALT, NOINVERT
     VK_RETURN,      IDM_COORDINATOR,        VIRTKEY, NOINVERT
+    "c",            IDM_COPY,               ASCII,  ALT, NOINVERT
     VK_RETURN,      IDM_COURSE,             VIRTKEY, NOINVERT
     "d",            IDM_DELETE,             ASCII,  ALT, NOINVERT
     VK_RETURN,      IDM_DEPT,               VIRTKEY, NOINVERT

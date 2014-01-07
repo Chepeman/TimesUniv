@@ -40,8 +40,8 @@ void PeriodDlg::btOK_Click(Win::Event& e)
 	}*/
 	Sql::StringBuilder sb(L"period", L"period_id", period_id);
 	sb.Bind(L"descr", tbxDescr);
-	sb.Bind(L"begin_date", dtboxBegin_date, L"MM-dd-yyyy");
-	sb.Bind(L"end_date", dtboxEnd_date, L"MM-dd-yyyy");
+	sb.Bind(L"begin_date", dtboxBegin_date, L"MMMM dd,yyyy");
+	sb.Bind(L"end_date", dtboxEnd_date, L"MMMM dd,yyyy");
 	Sql::SqlConnection conn;
 	int rows = 0;
 	try

@@ -18,9 +18,9 @@ void TimesUniv::Window_Open(Win::Event& e)
 	toolbMain.Create(NULL, NULL, WS_CHILD | WS_VISIBLE | CCS_NORESIZE | CCS_NOPARENTALIGN | CCS_ADJUSTABLE | CCS_NODIVIDER | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS, 18, 1, 964, 42, hWnd, 1000);
 
 	//________________________________________________________ toolbMain
-	TBBUTTON tbButton[8];//<< EDIT HERE THE NUMBER OF BUTTONS
+	TBBUTTON tbButton[9];//<< EDIT HERE THE NUMBER OF BUTTONS
 
-	toolbMain.imageList.Create(22, 22, 8);//<< EDIT HERE THE NUMBER OF IMAGES
+	toolbMain.imageList.Create(22, 22, 9);//<< EDIT HERE THE NUMBER OF IMAGES
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_COORDINATOR);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_PROFESSOR);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CAREER);
@@ -29,6 +29,7 @@ void TimesUniv::Window_Open(Win::Event& e)
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_PERIOD);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CLASSROOM);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CLASSTIME);
+	toolbMain.imageList.AddIcon(this->hInstance, IDI_UPDOWN);
 
 	toolbMain.SendMessage(TB_BUTTONSTRUCTSIZE, (WPARAM)(int)sizeof(TBBUTTON), 0); 
 	toolbMain.SetImageList(toolbMain.imageList);
@@ -88,10 +89,17 @@ void TimesUniv::Window_Open(Win::Event& e)
 	tbButton[7].fsStyle=BTNS_BUTTON;
 	tbButton[7].dwData=0L; 
 	tbButton[7].iString= (LONG_PTR)L"Time";
+	//_____________________________________
+	tbButton[8].iBitmap=MAKELONG(8, 0); //<< IMAGE INDEX
+	tbButton[8].idCommand=IDM_UPDOWN;
+	tbButton[8].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
+	tbButton[8].fsStyle=BTNS_BUTTON;
+	tbButton[8].dwData=0L; 
+	tbButton[8].iString= (LONG_PTR)L"Up/Down";
 
 	toolbMain.SetBitmapSize(20, 20);
 	toolbMain.SetButtonSize(24, 22);
-	toolbMain.AddButtons(tbButton, 8);// << EDIT HERE THE NUMBER OF BUTTONS
+	toolbMain.AddButtons(tbButton, 9);// << EDIT HERE THE NUMBER OF BUTTONS
 	toolbMain.SendMessage(TB_AUTOSIZE, 0, 0);
 	toolbMain.SetMaxTextRows(1);// EDIT HERE TO DISPLAY THE BUTTON TEXT
 	toolbMain.Show(SW_SHOWNORMAL);
@@ -295,6 +303,9 @@ void TimesUniv::Cmd_Classtime(Win::Event& e)
 	dlg.selected=CLASSTIME;
 	dlg.BeginDialog(hWnd);
 }
+void TimesUniv::Cmd_Updown(Win::Event& e)
+{
+}
 
 void TimesUniv::btClose_Click(Win::Event& e)
 {
@@ -397,8 +408,8 @@ void TimesUniv::loadAssignments()
 	Sql::SqlConnection conn;
 	wstring cmd;
 	Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name, a.cupo \
-					  FROM assignment a, professor p, course c, prog_course pc, program pr, period pe\
-					  WHERE a.course_id=c.course_id\
+					  FROM assignment a, professor p, course c, prog_course pc, program pr, period pe \
+					  WHERE a.course_id=c.course_id \
 							AND a.professor_id=p.professor_id \
 							AND a.period_id=pe.period_id \
 							AND c.course_id=pc.course_id \
