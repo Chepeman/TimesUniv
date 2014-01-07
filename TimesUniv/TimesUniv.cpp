@@ -469,7 +469,7 @@ void TimesUniv::loadProposals() //finish this function
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
 		conn.ExecuteSelect(cmd,100,lvProposal);
-		Sys::Format(cmd, L"SELECT course_id, professor_id, classroom_id, grupo FROM perturbation ORDER BY course_id");
+		Sys::Format(cmd, L"SELECT course_id, professor_id, classroom_id, grupo FROM perturbation ORDER BY course_id, grupo");
 		conn.ExecuteSelect(cmd);
 		conn.BindColumn(1,IDs.course);
 		conn.BindColumn(2,IDs.professor);
