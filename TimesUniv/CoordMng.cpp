@@ -103,6 +103,14 @@ void CoordMng::btAdd_Click(Win::Event& e)
 			return;
 		}
 
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM assignment WHERE professor_id=%d AND course_id=%d", professor_id, course_id);
+		count=conn.GetInt(cmd);
+		if(count>0)
+		{
+			Sys::Format(cmd,L"There are %d group(s) of this course with that professor, sure you want to add another?",count);
+			if(this->MessageBox(cmd, L"Already exists", MB_YESNO | MB_ICONQUESTION)==IDNO) return;
+		}
+		
 		Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment WHERE course_id=%d",course_id);
 		no_groups=conn.GetInt(cmd);
 

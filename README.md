@@ -7,10 +7,10 @@ Cosas por checar:
 
 Sergio:
 - REGEX
-- Mensaje de materia existente CoordMng 
+- Mensaje de materia existente CoordMng (DONE)
 - Checar profesores de área básica faltantes (DONE)
 - Distincion de mayusculas y minusculas en login (DONE y fue una mamada muy interesante XD)
-- Acomodar EditCourseDlg y ScheduleDlg
+- Acomodar EditCourseDlg, ScheduleDlg UpDownDlg
 - Checar períodos faltantes CoordMng (DONE)
 
 Chepe:
