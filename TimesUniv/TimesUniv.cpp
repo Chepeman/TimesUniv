@@ -654,7 +654,6 @@ void TimesUniv::ddPeriod_SelChange(Win::Event& e)
 {
 	loadAssignments();
 	loadProposals();
-
 }
 void TimesUniv::ddCareer_SelChange(Win::Event& e)
 {

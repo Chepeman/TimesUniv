@@ -56,7 +56,7 @@ void CoordMng::btAdd_Click(Win::Event& e)
 	}
 	wstring cmd;
 	char group='A';
-	int course_id,professor_id,period_id,cupo,no_groups,rows,coord_id;
+	int course_id,professor_id,period_id,cupo,no_groups,rows,coord_id,count;
 
 	const int course=lvCourse.GetSelectedIndex();
 	if(course<0)
@@ -90,10 +90,18 @@ void CoordMng::btAdd_Click(Win::Event& e)
 	}
 
 	Sql::SqlConnection conn;
+
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 		//conn.OpenSession(hWnd, CONNECTION_STRING);
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period_id);
+		count=conn.GetInt(cmd);
+		if(count>0)
+		{
+			this->MessageBox(L"Schedule of this period already been generated", L"Registration could not be admitted", MB_OK | MB_ICONERROR);
+			return;
+		}
 
 		Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment WHERE course_id=%d",course_id);
 		no_groups=conn.GetInt(cmd);
@@ -192,16 +200,40 @@ void CoordMng::loadAssignments()
 	lvAsign.Cols.Add(3, LVCFMT_RIGHT, 60, L"Quota");
 	lvAsign.Cols.Add(4, LVCFMT_RIGHT, 60, L"Group");
 
+	wstring cmd;
+	int count=0;
+	const int period=ddPeriod.GetSelectedData();
+	if(period<0)return;
+	Sql::SqlConnection conn;
+	try
+	{
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period);
+		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		count=conn.GetInt(cmd);
+		conn.CloseSession();
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+	
 	Assign aux;
 	wchar_t course_key[16],course[64],professor[256];
 	int index=0,quota=0,period_id=ddPeriod.SelectedData;
-
-	Sql::SqlConnection conn;
-	wstring cmd;
-	Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name, a.cupo, a.grupo \
+	if(count<1)
+	{
+		Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name, a.cupo, a.grupo \
 					  FROM assignment a, professor p, course c, prog_course pc, program pr, period pe\
 					  WHERE a.course_id=c.course_id AND a.professor_id=p.professor_id AND a.period_id=pe.period_id AND c.course_id=pc.course_id \
 					        AND pc.program_id=pr.program_id AND pc.program_id=%d AND a.period_id=%d", career_id, period_id);
+	}
+	else
+	{
+		Sys::Format(cmd,L"SELECT s.course_id, s.professor_id, s.period_id, c.course_key, c.descr, p.last_name_p+' '+ p.last_name_m+', '+p.name, 0, s.grupo \
+					  FROM schedule s, professor p, course c, prog_course pc, program pr, period pe\
+					  WHERE s.course_id=c.course_id AND s.professor_id=p.professor_id AND s.period_id=pe.period_id AND c.course_id=pc.course_id \
+					        AND pc.program_id=pr.program_id AND s.week_day_id BETWEEN 1 AND 2 AND pc.program_id=%d AND s.period_id=%d", career_id, period_id);
+	}
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
@@ -221,7 +253,8 @@ void CoordMng::loadAssignments()
 			lvAsign.Items.Add(index,course_key,index);
 			lvAsign.Items[index][1].Text=course;
 			lvAsign.Items[index][2].Text=professor;
-			lvAsign.Items[index][3].Text=Sys::Convert::ToString(quota);
+			if(count<1)lvAsign.Items[index][3].Text=Sys::Convert::ToString(quota);
+			else lvAsign.Items[index][3].Text=L"Don't Apply";
 			lvAsign.Items[index][4].Text=aux.group;
 			index++;
 		}
