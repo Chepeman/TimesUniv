@@ -34,12 +34,20 @@ void UpDownDlg::btAddC_Click(Win::Event& e)
 
 void UpDownDlg::btDeleteM_Click(Win::Event& e)
 {
-
+	int course_id;
+	char group;
+	wstring mat;
+	int index=lvModify.GetSelectedIndex();
+	course_id=lvModify.Items[index].GetData();
+	group=(char)lvModify.Items[index][8].GetText()[0];
+	mat=lvModify.Items[index][3].GetText();
+	this->MessageBox(L"Do you want to delete "+mat+L" Group "+Sys::Convert::ToString(group), L"Are you sure?", MB_YESNO | MB_ICONQUESTION);
+	
 }
 
 void UpDownDlg::btClose_Click(Win::Event& e)
 {
-
+	this->EndDialog(TRUE);
 }
 
 void UpDownDlg::ddCareer_SelChange(Win::Event& e)
@@ -66,7 +74,7 @@ void UpDownDlg::loadSchedule(void)
 	lvModify.Cols.Add(10,LVCFMT_LEFT, 100, L"Profesor");
 	const int career=ddCareer.GetSelectedIndex();
 	int career_id=ddCareer.Items[career].GetData();
-	Sys::Format(cmd,L"SELECT	p.descr AS 'Clave de Prog', \
+	Sys::Format(cmd,L"SELECT s.course_id,p.descr AS 'Clave de Prog', \
 		c.course_key AS 'Clave de Mat', \
 		c.descr AS Materia, \
 		dbo.check_day_s(s.course_id, s.grupo, 1) AS Lunes,\

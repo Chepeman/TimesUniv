@@ -324,6 +324,8 @@ void TimesUniv::Cmd_Updown(Win::Event& e)
 	UpDownDlg dlg;
 	dlg.cu_period=current_period;
 	dlg.BeginDialog(hWnd);
+	loadProposals();
+	loadAssignments();
 }
 
 void TimesUniv::btClose_Click(Win::Event& e)

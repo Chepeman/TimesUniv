@@ -35,11 +35,60 @@ void AddCourseUD::Window_Open(Win::Event& e)
 
 void AddCourseUD::btAccept_Click(Win::Event& e)
 {
+	int course_id=ddCourse.GetSelectedData();
+	int professor_id=ddProfessor.GetSelectedData();
+	int classroom_id=ddClassroom.GetSelectedData();
+	int week_id=ddClassdays.GetSelectedIndex()+1;
+	int classtime_id=ddClasstime.GetSelectedData();
+	if(course_id>1 || professor_id>1 || classroom_id>1 || week_id >1 || classtime_id >1)
+	{
+		this->MessageBox(L"You haven't selected all the required data", L"Error", MB_OK | MB_ICONERROR);
+		return;
+	}
+	wstring cmd;
+	char group='A';
+	Sql::SqlConnection conn;
+	int no_groups;
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM schedule WHERE course_id=%d AND period_id=%d AND week_day_id BETWEEN 1 AND 2",course_id, current_period);
+		no_groups=conn.GetInt(cmd);
+		group+=no_groups;
+
+		if(week_id==1)
+		{
+			Sys::Format(cmd, L"INSERT INTO schedule(period_id,professor_id,course_id,grupo,classroom_id,classtime_id,week_day_id)VALUES(%d,%d,%d,'%c',%d,%d,1)",current_period,professor_id,course_id,group, classroom_id,classtime_id);
+			conn.ExecuteNonQuery(cmd);
+			Sys::Format(cmd, L"INSERT INTO schedule(period_id,professor_id,course_id,grupo,classroom_id,classtime_id,week_day_id)VALUES(%d,%d,%d,'%c',%d,%d,3)",current_period,professor_id,course_id,group, classroom_id,classtime_id);
+			conn.ExecuteNonQuery(cmd);
+			Sys::Format(cmd, L"INSERT INTO schedule(period_id,professor_id,course_id,grupo,classroom_id,classtime_id,week_day_id)VALUES(%d,%d,%d,'%c',%d,%d,5)",current_period,professor_id,course_id,group, classroom_id,classtime_id);
+			conn.ExecuteNonQuery(cmd);
+		}
+		else
+		{
+			Sys::Format(cmd, L"INSERT INTO schedule(period_id,professor_id,course_id,grupo,classroom_id,classtime_id,week_day_id)VALUES(%d,%d,%d,'%c',%d,%d,2)",current_period,professor_id,course_id,group, classroom_id,classtime_id);
+			conn.ExecuteNonQuery(cmd);
+			Sys::Format(cmd, L"INSERT INTO schedule(period_id,professor_id,course_id,grupo,classroom_id,classtime_id,week_day_id)VALUES(%d,%d,%d,'%c',%d,%d,4)",current_period,professor_id,course_id,group, classroom_id,classtime_id);
+			conn.ExecuteNonQuery(cmd);
+		}
+
+		conn.CloseSession();
+	}
+	catch (Sql::SqlException e)
+	{
+		
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+
+	this->EndDialog(TRUE);
+
+
 }
 
 void AddCourseUD::btCancel_Click(Win::Event& e)
 {
-	
+	this->EndDialog(TRUE);
 }
 
 void AddCourseUD::loadByCareer(void)
