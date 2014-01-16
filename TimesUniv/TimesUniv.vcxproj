@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
+    <ClInclude Include="AddCourseUD.h" />
     <ClInclude Include="ClassroomDlg.h" />
     <ClInclude Include="CoordDlg.h" />
     <ClInclude Include="CoordMng.h" />
@@ -131,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
+    <ClCompile Include="AddCourseUD.cpp" />
     <ClCompile Include="ClassroomDlg.cpp" />
     <ClCompile Include="CoordDlg.cpp" />
     <ClCompile Include="CoordMng.cpp" />

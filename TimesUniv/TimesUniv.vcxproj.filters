@@ -161,6 +161,9 @@
     <ClInclude Include="UpDownDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AddCourseUD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -221,6 +224,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UpDownDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AddCourseUD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

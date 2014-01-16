@@ -1,5 +1,6 @@
 #pragma once   //_____________________________________________ UpDownDlg.h  
 #include "resource.h"
+#include "AddCourseUD.h"
 
 class UpDownDlg: public Win::Dialog
 {

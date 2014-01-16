@@ -17,6 +17,7 @@ void UpDownDlg::Window_Open(Win::Event& e)
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 	//________________________________________________________ lvModify
+	ddCareer.SelectedIndex=0;
 	loadSchedule();
 }
 
@@ -24,6 +25,10 @@ void UpDownDlg::Window_Open(Win::Event& e)
 
 void UpDownDlg::btAddC_Click(Win::Event& e)
 {
+	AddCourseUD dlg;
+	dlg.current_period=cu_period;
+	dlg.BeginDialog(hWnd);
+	loadSchedule();
 
 }
 
@@ -79,8 +84,8 @@ void UpDownDlg::loadSchedule(void)
 		AND pr.professor_id=s.professor_id\
 		AND cl.classroom_id=s.classroom_id\
 		AND s.week_day_id BETWEEN 1 AND 2\
-		AND s.period_id=3\
-		AND p.program_id=%d",career_id);
+		AND s.period_id=%d\
+		AND p.program_id=%d",cu_period,career_id);
 		
 	Sql::SqlConnection conn;
 	try

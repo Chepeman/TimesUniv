@@ -73,12 +73,14 @@ protected:
 		btCancel.Font = fontArial014A;
 	}
 	//_________________________________________________
+	void ddCareer_SelChange(Win::Event& e);
 	void btAccept_Click(Win::Event& e);
 	void btCancel_Click(Win::Event& e);
 	void Window_Open(Win::Event& e);
 	//_________________________________________________
 	bool EventHandler(Win::Event& e)
 	{
+		if (ddCareer.IsEvent(e, CBN_SELCHANGE)) {ddCareer_SelChange(e); return true;}
 		if (btAccept.IsEvent(e, BN_CLICKED)) {btAccept_Click(e); return true;}
 		if (btCancel.IsEvent(e, BN_CLICKED)) {btCancel_Click(e); return true;}
 		return false;
