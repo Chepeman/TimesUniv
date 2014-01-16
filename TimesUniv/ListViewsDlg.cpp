@@ -324,6 +324,7 @@ void ListViewsDlg::UpdateLvCoord()
 }
 void ListViewsDlg::UpdateLvProf()
 {
+	int dept=0;
 	this->Text=L"Timesuniv - Professors";
 	lvMain.Items.DeleteAll();
 	lvMain.Cols.DeleteAll();
@@ -335,18 +336,31 @@ void ListViewsDlg::UpdateLvProf()
 
 	int selection=ddCareer.SelectedData;
 	wstring cmd;
-	Sys::Format(cmd,L"SELECT p.professor_id, p.last_name_p+' '+p.last_name_m+', '+p.name, p.email, p.extension,\
+	
+	Sql::SqlConnection conn;
+    try
+	{
+        conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
+        //conn.OpenSession(hWnd, CONNECTION_STRING);
+		Sys::Format(cmd,L"SELECT department_id FROM program WHERE program_id=%d",selection);
+		dept=conn.GetInt(cmd);
+		if(dept!=1)
+		{
+			Sys::Format(cmd,L"SELECT p.professor_id, p.last_name_p+' '+p.last_name_m+', '+p.name, p.email, p.extension,\
 							CASE WHEN p.promep = 1 THEN 'Yes' ELSE 'No' END,\
 							CASE WHEN p.sni = 1 THEN 'Yes' ELSE 'No' END\
 					  FROM professor p, department d, program pg\
 					  WHERE p.department_id=d.department_id AND pg.department_id=d.department_id AND pg.program_id=%d\
 					  ORDER BY p.last_name_p",selection);
-	Sql::SqlConnection conn;
-    try
-    {
-         conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
-         //conn.OpenSession(hWnd, CONNECTION_STRING);
-         conn.ExecuteSelect(cmd, 100, lvMain);
+		}
+		else
+		{
+			Sys::Format(cmd,L"SELECT p.professor_id, p.last_name_p+' '+p.last_name_m+', '+p.name, p.email, p.extension,\
+							CASE WHEN p.promep = 1 THEN 'Yes' ELSE 'No' END,\
+							CASE WHEN p.sni = 1 THEN 'Yes' ELSE 'No' END\
+					  FROM professor p ORDER BY p.last_name_p");
+		}
+        conn.ExecuteSelect(cmd, 100, lvMain);
     }
     catch (Sql::SqlException e)
     {
@@ -496,8 +510,8 @@ void ListViewsDlg::UpdateLvTime()
 	this->Text=L"TimesUniv - Classtimes";
 	lvMain.Items.DeleteAll();
 	lvMain.Cols.DeleteAll();
-	lvMain.Cols.Add(0, LVCFMT_CENTER, 150, L"Begin Time");
-	lvMain.Cols.Add(1, LVCFMT_CENTER, 150, L"End Time");
+	lvMain.Cols.Add(0, LVCFMT_LEFT, 150, L"Begin Time");
+	lvMain.Cols.Add(1, LVCFMT_LEFT, 150, L"End Time");
 	
 	Sql::SqlConnection conn;
     try

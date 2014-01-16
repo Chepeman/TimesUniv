@@ -8,8 +8,8 @@ Cosas por checar:
 Sergio:
 - REGEX
 - Mensaje de materia existente CoordMng
-- Checar profesores de área básica faltantes
-- Distincion de mayusculas y minusculas en login
+- Checar profesores de área básica faltantes (DONE)
+- Distincion de mayusculas y minusculas en login (DONE y fue una mamada muy interesante XD)
 - Acomodar EditCourseDlg y ScheduleDlg
 - Checar períodos faltantes CoordMng
 
