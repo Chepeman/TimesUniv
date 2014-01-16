@@ -11,6 +11,7 @@ public:
 	{
 	}
 	int cu_period;
+	void loadSchedule(void);
 private:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
 	Win::Button gbox1;
@@ -46,6 +47,7 @@ protected:
 		btClose.Font = fontArial014A;
 	}
 	//_________________________________________________
+	void ddCareer_SelChange(Win::Event& e);
 	void btAddC_Click(Win::Event& e);
 	void btDeleteM_Click(Win::Event& e);
 	void btClose_Click(Win::Event& e);
@@ -53,6 +55,7 @@ protected:
 	//_________________________________________________
 	bool EventHandler(Win::Event& e)
 	{
+		if (ddCareer.IsEvent(e, CBN_SELCHANGE)) {ddCareer_SelChange(e); return true;}
 		if (btAddC.IsEvent(e, BN_CLICKED)) {btAddC_Click(e); return true;}
 		if (btDeleteM.IsEvent(e, BN_CLICKED)) {btDeleteM_Click(e); return true;}
 		if (btClose.IsEvent(e, BN_CLICKED)) {btClose_Click(e); return true;}

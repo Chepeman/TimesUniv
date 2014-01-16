@@ -133,9 +133,9 @@ void TimesUniv::Window_Open(Win::Event& e)
 		//_______________________________Check the Up-Down date
 		const int period=ddPeriod.GetSelectedIndex();
 		if(period<0)return;
-		int period_id=ddPeriod.GetSelectedData();
+		current_period=ddPeriod.GetSelectedData();
 		wstring udCmd;
-		Sys::Format(udCmd,L"SELECT DATEDIFF(day, DATEADD(day,35,begin_date), GETDATE()) FROM period WHERE period_id=%d",period_id);
+		Sys::Format(udCmd,L"SELECT DATEDIFF(day, DATEADD(day,35,begin_date), GETDATE()) FROM period WHERE period_id=%d",current_period);
 		int isActive=-1;
 		try
 		{
@@ -321,6 +321,9 @@ void TimesUniv::Cmd_Classtime(Win::Event& e)
 }
 void TimesUniv::Cmd_Updown(Win::Event& e)
 {
+	UpDownDlg dlg;
+	dlg.cu_period=current_period;
+	dlg.BeginDialog(hWnd);
 }
 
 void TimesUniv::btClose_Click(Win::Event& e)

@@ -125,6 +125,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TimeDlg.h" />
     <ClInclude Include="TimesUniv.h" />
+    <ClInclude Include="UpDownDlg.h" />
     <ClInclude Include="Wintempla.h" />
     <ClInclude Include="WintemplaWin.h" />
   </ItemGroup>
@@ -149,6 +150,7 @@
     </ClCompile>
     <ClCompile Include="TimeDlg.cpp" />
     <ClCompile Include="TimesUniv.cpp" />
+    <ClCompile Include="UpDownDlg.cpp" />
     <ClCompile Include="Wintempla.cpp" />
     <ClCompile Include="WintemplaWin.cpp" />
   </ItemGroup>

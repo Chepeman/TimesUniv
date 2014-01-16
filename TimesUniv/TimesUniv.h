@@ -7,6 +7,7 @@
 #include "CoordMng.h"
 #include "EditCourseDlg.h"
 #include "ScheduleDlg.h"
+#include "UpDownDlg.h"
 
 #define MAIN_TIMER 1
 
@@ -42,6 +43,7 @@ public:
 	int checkImage(int course, char group);
 	wstring checkErrorDescription(int course, char group);
 	bool isCLickleable;
+	int current_period;
 protected:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
 	Win::Toolbar toolbMain;
