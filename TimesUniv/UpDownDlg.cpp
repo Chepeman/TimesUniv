@@ -40,8 +40,25 @@ void UpDownDlg::btDeleteM_Click(Win::Event& e)
 	int index=lvModify.GetSelectedIndex();
 	course_id=lvModify.Items[index].GetData();
 	group=(char)lvModify.Items[index][8].GetText()[0];
-	mat=lvModify.Items[index][3].GetText();
-	this->MessageBox(L"Do you want to delete "+mat+L" Group "+Sys::Convert::ToString(group), L"Are you sure?", MB_YESNO | MB_ICONQUESTION);
+	mat=lvModify.Items[index][2].GetText();
+	if(this->MessageBox(L"Do you want to delete "+mat+L" Group "+lvModify.Items[index][8].GetText(), L"Are you sure?", MB_YESNO | MB_ICONQUESTION)==IDYES)
+	{
+		wstring cmd;
+		Sql::SqlConnection conn;
+		Sys::Format(cmd,L"DELETE FROM schedule WHERE period_id=%d AND course_id=%d AND grupo='%c'",cu_period,course_id,group);
+		try
+		{
+			conn.OpenSession(DSN,USERNAME,PASSWORD);
+			conn.ExecuteNonQuery(cmd);
+			conn.CloseSession();
+		}
+		catch (Sql::SqlException e)
+		{
+			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		}
+		loadSchedule();
+	}
+	else return;
 	
 }
 

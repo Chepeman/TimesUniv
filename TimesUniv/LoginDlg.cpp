@@ -7,7 +7,7 @@ void LoginDlg::Window_Open(Win::Event& e)
 	tbxPass.SetText(L"");
 	//________________________________________________________ imgUG
 	//imgUG.FileName=L"C:\\Users\\BrYt3 KaTz3\\Dropbox\\Marikillas\\TimesUniv\\TimesUniv\\UG.png";
-	imgUG.FileName=L"C:\\Users\\JCarlos\\Dropbox\\Marikillas\\TimesUniv\\TimesUniv\\UG.png";
+	imgUG.FileName=L"UG.png";
 	this->Text=L"Welcome";
 	this->AlwaysOnTop(true);
 }
