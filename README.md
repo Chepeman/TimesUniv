@@ -15,4 +15,4 @@ Sergio:
 
 Chepe:
 - Altas y bajas
-- Checar períodos faltantes lvAssignment
+- Checar períodos faltantes lvAssignment (DONE)

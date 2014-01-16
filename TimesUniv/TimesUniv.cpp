@@ -92,7 +92,7 @@ void TimesUniv::Window_Open(Win::Event& e)
 	//_____________________________________
 	tbButton[8].iBitmap=MAKELONG(8, 0); //<< IMAGE INDEX
 	tbButton[8].idCommand=IDM_UPDOWN;
-	tbButton[8].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
+	tbButton[8].fsState=TBSTATE_HIDDEN; // | TBSTATE_WRAP
 	tbButton[8].fsStyle=BTNS_BUTTON;
 	tbButton[8].dwData=0L; 
 	tbButton[8].iString= (LONG_PTR)L"Up/Down";
@@ -130,10 +130,25 @@ void TimesUniv::Window_Open(Win::Event& e)
 		wstring sqlCmd;
 		wstring username=dlg.tbxUser.Text;
 		wstring password=dlg.tbxPass.Text;
+		//_______________________________Check the Up-Down date
+		const int period=ddPeriod.GetSelectedIndex();
+		if(period<0)return;
+		int period_id=ddPeriod.GetSelectedData();
+		wstring udCmd;
+		Sys::Format(udCmd,L"SELECT DATEDIFF(day, DATEADD(day,35,begin_date), GETDATE()) FROM period WHERE period_id=%d",period_id);
+		int isActive=-1;
 		try
 		{
 			conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 			//conn.OpenSession(hWnd, CONNECTION_STRING);
+
+			//______________________________________________Is Active Up/Down period?
+			isActive=conn.GetInt(udCmd);
+			if(isActive<1)
+			{
+				toolbMain.HideButton(IDM_UPDOWN, false);
+				toolbMain.EnableButton(IDM_UPDOWN, true);
+			}
 			//_____________________________________________ Is Admin?
 			Sys::Format(sqlCmd,L"SELECT isAdmin FROM coordinator WHERE username='%s'",username.c_str());
 			const bool isAdmin = conn.GetBool(sqlCmd);
@@ -157,6 +172,7 @@ void TimesUniv::Window_Open(Win::Event& e)
 		{
 			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 		}
+		 
 	}
 	else
 	{
@@ -394,7 +410,12 @@ void TimesUniv::loadAssignments()
 	lvAsign.Cols.Add(1, LVCFMT_LEFT, 180, L"Course");
 	lvAsign.Cols.Add(2, LVCFMT_LEFT, 180, L"Professor");
 	lvAsign.Cols.Add(3, LVCFMT_RIGHT, 60, L"Quota");
-
+	const int period2=ddPeriod.GetSelectedIndex();
+	if(period2<0)return;
+	int period_id2=ddPeriod.GetSelectedData();
+	Sql::SqlConnection conn;
+	int count;
+	wstring cmd;
 	Assign aux;
 	wchar_t course_key[16],course[64],professor[128]; //grupo[2]
 	int index=0,quota=0,career_id=-1,period_id=-1;
@@ -404,44 +425,98 @@ void TimesUniv::loadAssignments()
 
 	const int period=ddPeriod.GetSelectedIndex();
 	period_id=ddPeriod.Items[period].GetData();
-
-	Sql::SqlConnection conn;
-	wstring cmd;
-	Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name, a.cupo \
-					  FROM assignment a, professor p, course c, prog_course pc, program pr, period pe \
-					  WHERE a.course_id=c.course_id \
-							AND a.professor_id=p.professor_id \
-							AND a.period_id=pe.period_id \
-							AND c.course_id=pc.course_id \
-					        AND pc.program_id=pr.program_id \
-							AND pc.program_id=%d \
-							AND a.period_id=%d", career_id, period_id);
 	try
 	{
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period_id2);
 		conn.OpenSession(DSN, USERNAME, PASSWORD);
-		conn.ExecuteSelect(cmd);
-		conn.BindColumn(1,aux.course_id);
-		conn.BindColumn(2,aux.professor_id);
-		conn.BindColumn(3,aux.period_id);
-		conn.BindColumn(4,course_key,16);
-		conn.BindColumn(5,course,64);
-		conn.BindColumn(6,professor,128);
-		conn.BindColumn(7,quota);
-
-		while (conn.Fetch())
-		{
-			assign.push_back(aux);
-			lvAsign.Items.Add(index,course_key,index);
-			lvAsign.Items[index][1].Text=course;
-			lvAsign.Items[index][2].Text=professor;
-			lvAsign.Items[index][3].Text=Sys::Convert::ToString(quota);
-			index++;
-		}
+		count=conn.GetInt(cmd);
 		conn.CloseSession();
 	}
 	catch (Sql::SqlException e)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+	if(count<1)
+	{
+
+		Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name, a.cupo \
+						  FROM assignment a, professor p, course c, prog_course pc, program pr, period pe \
+						  WHERE a.course_id=c.course_id \
+								AND a.professor_id=p.professor_id \
+								AND a.period_id=pe.period_id \
+								AND c.course_id=pc.course_id \
+								AND pc.program_id=pr.program_id \
+								AND pc.program_id=%d \
+								AND a.period_id=%d", career_id, period_id);
+		try
+		{
+			conn.OpenSession(DSN, USERNAME, PASSWORD);
+			conn.ExecuteSelect(cmd);
+			conn.BindColumn(1,aux.course_id);
+			conn.BindColumn(2,aux.professor_id);
+			conn.BindColumn(3,aux.period_id);
+			conn.BindColumn(4,course_key,16);
+			conn.BindColumn(5,course,64);
+			conn.BindColumn(6,professor,128);
+			conn.BindColumn(7,quota);
+
+			while (conn.Fetch())
+			{
+				assign.push_back(aux);
+				lvAsign.Items.Add(index,course_key,index);
+				lvAsign.Items[index][1].Text=course;
+				lvAsign.Items[index][2].Text=professor;
+				lvAsign.Items[index][3].Text=Sys::Convert::ToString(quota);
+				index++;
+			}
+			conn.CloseSession();
+		}
+		catch (Sql::SqlException e)
+		{
+			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		}
+	}
+
+
+	else
+	{
+		Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name \
+						  FROM schedule s, professor p, course c, prog_course pc, program pr, period pe, week_day w \
+						  WHERE s.course_id=c.course_id \
+								AND s.professor_id=p.professor_id \
+								AND s.period_id=pe.period_id \
+								AND c.course_id=pc.course_id \
+								AND pc.program_id=pr.program_id \
+								AND w.week_day_id=s.week_day_id\
+								AND w.week_day_id BETWEEN 1 AND 2\
+								AND pc.program_id=%d \
+								AND s.period_id=%d", career_id, period_id);
+		try
+		{
+			conn.OpenSession(DSN, USERNAME, PASSWORD);
+			conn.ExecuteSelect(cmd);
+			conn.BindColumn(1,aux.course_id);
+			conn.BindColumn(2,aux.professor_id);
+			conn.BindColumn(3,aux.period_id);
+			conn.BindColumn(4,course_key,16);
+			conn.BindColumn(5,course,64);
+			conn.BindColumn(6,professor,128);
+
+			while (conn.Fetch())
+			{
+				assign.push_back(aux);
+				lvAsign.Items.Add(index,course_key,index);
+				lvAsign.Items[index][1].Text=course;
+				lvAsign.Items[index][2].Text=professor;
+				lvAsign.Items[index][3].Text=L"Don't Apply";
+				index++;
+			}
+			conn.CloseSession();
+		}
+		catch (Sql::SqlException e)
+		{
+			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		}
 	}
 	lvAsign.SetRedraw(true);
 }

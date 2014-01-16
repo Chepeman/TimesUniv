@@ -56,7 +56,7 @@ IDI_DEPT                ICON                    "dept.ico"
 IDI_PERIOD              ICON                    "period.ico"
 IDI_PROFESSOR           ICON                    "professor.ico"
 IDI_VOID                ICON                    "ico00001.ico"
-IDI_UPDOWN              ICON                    "C:\\Users\\BrYt3 KaTz3\\Documents\\GitHub\\TimesUniv\\TimesUniv\\updown.ico"
+IDI_UPDOWN              ICON                    "updown.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
