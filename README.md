@@ -13,6 +13,6 @@ Sergio:
 - Acomodar EditCourseDlg, ScheduleDlg UpDownDlg
 - Checar períodos faltantes CoordMng (DONE)
 
-Chepe:
-- Altas y bajas
+Chepe: (Sooooy tan feliz T_T)
+- Altas y bajas (DONE!)
 - Checar períodos faltantes lvAssignment (DONE)
