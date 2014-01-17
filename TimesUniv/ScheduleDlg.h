@@ -9,7 +9,6 @@ struct ScheduleID //Needs to be modified, adding the quota and professor hours
 	wchar_t grupo[2];
 	int classtime;
 	int week_day;
-	
 };
 class ScheduleDlg: public Win::Dialog
 {
@@ -21,6 +20,7 @@ public:
 	{
 	}
 	int period_id;
+	vector<ScheduleID> schedule;
 private:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
 	Win::Button gbox1;

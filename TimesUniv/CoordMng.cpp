@@ -135,14 +135,34 @@ void CoordMng::btAdd_Click(Win::Event& e)
 }
 void CoordMng::btDelete_Click(Win::Event& e)
 {
+	int period_id=0, count=0;
+	wstring cmd;
+	period_id=ddPeriod.GetSelectedData();
+
+	Sql::SqlConnection conn;
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD); 
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period_id);
+		count=conn.GetInt(cmd);
+		if(count>0)
+		{
+			this->MessageBox(L"Schedule of this period already been generated", L"Registration could not be admitted", MB_OK | MB_ICONERROR);
+			return;
+		}
+		conn.CloseSession();
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+
 	Win::HourGlassCursor hgc(true);
 	const int index=lvAsign.GetSelectedIndex();
 	if (index<0)return;
 	if (this->MessageBox(L"Are you sure you want to delete the selected record?",
 		L"Delete Record", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
 
-	Sql::SqlConnection conn;
-	wstring cmd;
 	int coord_id=0;
 
 	try
