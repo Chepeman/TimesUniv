@@ -3,7 +3,7 @@
 
 void AddCourseUD::Window_Open(Win::Event& e)
 {
-
+	this->Text=L"Add new coourse";
 	wstring cmd;
 	Sql::SqlConnection conn;
 	try
@@ -14,11 +14,9 @@ void AddCourseUD::Window_Open(Win::Event& e)
 		conn.ExecuteSelect(L"SELECT classroom_id, descr FROM classroom",100,ddClassroom);
 		conn.ExecuteSelect(L" SELECT classtime_id, CONVERT(varchar(15),begin_time,100) + ' - ' + CONVERT(varchar(15),end_time,100) FROM classtime ", 100, ddClasstime);
 		conn.CloseSession();
-
 	}
 	catch (Sql::SqlException e)
 	{
-		
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 	ddClassdays.Items.Add(L"Lun-Mie-Vie");
@@ -28,11 +26,7 @@ void AddCourseUD::Window_Open(Win::Event& e)
 	ddClassroom.SelectedIndex=0;
 	ddClasstime.SelectedIndex=0;
 	loadByCareer();
-	
 }
-
-
-
 void AddCourseUD::btAccept_Click(Win::Event& e)
 {
 	int course_id=ddCourse.GetSelectedData();
@@ -72,25 +66,18 @@ void AddCourseUD::btAccept_Click(Win::Event& e)
 			Sys::Format(cmd, L"INSERT INTO schedule(period_id,professor_id,course_id,grupo,classroom_id,classtime_id,week_day_id)VALUES(%d,%d,%d,'%c',%d,%d,4)",current_period,professor_id,course_id,group, classroom_id,classtime_id);
 			conn.ExecuteNonQuery(cmd);
 		}
-
 		conn.CloseSession();
 	}
 	catch (Sql::SqlException e)
 	{
-		
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
-
 	this->EndDialog(TRUE);
-
-
 }
-
 void AddCourseUD::btCancel_Click(Win::Event& e)
 {
 	this->EndDialog(TRUE);
 }
-
 void AddCourseUD::loadByCareer(void)
 {
 	int program=ddCareer.GetSelectedData();
@@ -130,14 +117,10 @@ void AddCourseUD::loadByCareer(void)
 		
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
-
 	ddCourse.SelectedIndex=0;
 	ddProfessor.SelectedIndex=0;
-
 }
 void AddCourseUD::ddCareer_SelChange(Win::Event& e)
 {
 	loadByCareer();
-	
 }
-

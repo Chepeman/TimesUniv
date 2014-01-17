@@ -29,9 +29,6 @@ void ScheduleDlg::Window_Open(Win::Event& e)
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 }
-
-
-
 void ScheduleDlg::btOk_Click(Win::Event& e)
 {
 	Sql::SqlConnection conn;
@@ -48,7 +45,6 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 		this->MessageBox(L"No fue posible exportar la informacion",L"Exportar a Excel",MB_OK|MB_ICONERROR);
 		return;
 	}
-	
 	Sys::Format(cmd, L"SELECT pt.professor_id, pt.course_id, pt.classroom_id, pt.grupo,  ct.classtime_id, ct.week_day_id FROM perturbation pt, course c, course_time ct WHERE c.course_id=pt.course_id  AND c.course_id=ct.course_id AND pt.grupo=ct.grupo;");
 	try
 	{
@@ -62,7 +58,6 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 		conn.BindColumn(6, s.week_day);
 		while(conn.Fetch())
 			schedule.push_back(s);
-		
 		ss=schedule.size();
 
 		for(int i=0; i<ss;i++)
@@ -70,7 +65,6 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 			Sys::Format(cmd, L"INSERT INTO schedule (period_id, professor_id, course_id, grupo, classroom_id, classtime_id, week_day_id) VALUES(%d,%d,%d,'%c',%d, %d, %d)",period_id,schedule[i].professor_id,schedule[i].course_id,schedule[i].grupo[0], schedule[i].classroom_id, schedule[i].classtime, schedule[i].week_day);
 			conn.ExecuteNonQuery(cmd);
 		}
-
 		Sys::Format(cmd,L"DELETE FROM perturbation");
 		conn.ExecuteSelect(cmd);
 	    Sys::Format(cmd,L"DELETE FROM course_time");
@@ -79,18 +73,13 @@ void ScheduleDlg::btOk_Click(Win::Event& e)
 		conn.ExecuteSelect(cmd);
 		conn.CloseSession();
 	}
-
 	catch(Sql::SqlException e)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
-
 	this->EndDialog(TRUE);
 }
-
 void ScheduleDlg::btCancel_Click(Win::Event& e)
 {
 	this->EndDialog(FALSE);
 }
-
-

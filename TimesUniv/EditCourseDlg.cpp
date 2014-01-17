@@ -60,9 +60,6 @@ void EditCourseDlg::Window_Open(Win::Event& e)
 	ddClassroom.SetSelectedByData(classroom_id);
 	ddHours.SetSelectedByData(classtime);
 }
-
-
-
 void EditCourseDlg::btOk_Click(Win::Event& e)
 {
 	int rows=-1;
@@ -92,7 +89,6 @@ void EditCourseDlg::btOk_Click(Win::Event& e)
 			this->MessageBox(Sys::Convert::ToString(rows), L"Error: number of affected rows", MB_OK | MB_ICONERROR);
 			return;
 		}
-
 		if(classhours==4)
 		{
 			Sys::Format(cmd,L"UPDATE course_time SET classtime_id=%d WHERE course_id=%d AND grupo='%c' AND week_day_id=2",classtime_id, course_id, group);
@@ -134,7 +130,6 @@ void EditCourseDlg::btOk_Click(Win::Event& e)
 				this->MessageBox(Sys::Convert::ToString(rows), L"Error: number of affected rows", MB_OK | MB_ICONERROR);
 				return;
 			}
-
 		}
 	}
 	catch(Sql::SqlException e)
@@ -142,11 +137,8 @@ void EditCourseDlg::btOk_Click(Win::Event& e)
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 	this->EndDialog(TRUE);
-
 }
-
 void EditCourseDlg::btCancel_Click(Win::Event& e)
 {
 	this->EndDialog(FALSE);
 }
-

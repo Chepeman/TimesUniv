@@ -14,6 +14,7 @@ public:
 	int classroom_id;
 private:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
+	Win::Button gbox1;
 	Win::Label lbDescr;
 	Win::Textbox tbxDescr;
 	Win::Label lbContact_count;
@@ -28,25 +29,27 @@ protected:
 	Win::Gdi::Font fontArial014A;
 	void GetDialogTemplate(DLGTEMPLATE& dlgTemplate)
 	{
-		dlgTemplate.cx = Sys::Convert::PixelToDlgUnitX(417);
-		dlgTemplate.cy = Sys::Convert::PixelToDlgUnitY(175);
+		dlgTemplate.cx = Sys::Convert::PixelToDlgUnitX(355);
+		dlgTemplate.cy = Sys::Convert::PixelToDlgUnitY(237);
 		dlgTemplate.style = WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_VISIBLE | DS_CENTER | DS_MODALFRAME;
 	}
 	//_________________________________________________
 	void InitializeGui()
 	{
-		lbDescr.Create(NULL, L"Description:", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 11, 14, 78, 18, hWnd, 1000);
-		tbxDescr.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_WINNORMALCASE, 107, 10, 200, 25, hWnd, 1001);
-		lbContact_count.Create(NULL, L"Contact Count:", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 10, 47, 95, 17, hWnd, 1002);
-		tbxContact_count.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_WINNORMALCASE, 107, 41, 200, 25, hWnd, 1003);
-		lbSeat_count.Create(NULL, L"Seat Count:", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 10, 79, 76, 17, hWnd, 1004);
-		tbxSeat_count.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_WINNORMALCASE, 107, 72, 200, 25, hWnd, 1005);
-		ckHas_projector.Create(NULL, L"Has projector", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_AUTOCHECKBOX | BS_LEFT | BS_VCENTER, 107, 103, 200, 26, hWnd, 1006);
-		ckHas_tables.Create(NULL, L"Has tables", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_AUTOCHECKBOX | BS_LEFT | BS_VCENTER, 107, 129, 200, 26, hWnd, 1007);
-		btOK.Create(NULL, L"OK", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_DEFPUSHBUTTON | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 317, 10, 80, 28, hWnd, 1008);
-		btCancel.Create(NULL, L"Cancel", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 317, 43, 80, 28, hWnd, 1009);
+		gbox1.Create(WS_EX_TRANSPARENT, L"Data:", WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 19, 14, 316, 170, hWnd, 1000);
+		lbDescr.Create(NULL, L"Description:", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 28, 35, 78, 18, hWnd, 1001);
+		tbxDescr.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_WINNORMALCASE, 124, 31, 200, 25, hWnd, 1002);
+		lbContact_count.Create(NULL, L"Contact Count:", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 27, 68, 95, 17, hWnd, 1003);
+		tbxContact_count.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_WINNORMALCASE, 124, 62, 200, 25, hWnd, 1004);
+		lbSeat_count.Create(NULL, L"Seat Count:", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 27, 100, 76, 17, hWnd, 1005);
+		tbxSeat_count.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_LEFT | ES_WINNORMALCASE, 124, 93, 200, 25, hWnd, 1006);
+		ckHas_projector.Create(NULL, L"Has projector", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_AUTOCHECKBOX | BS_LEFT | BS_VCENTER, 124, 124, 200, 26, hWnd, 1007);
+		ckHas_tables.Create(NULL, L"Has tables", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_AUTOCHECKBOX | BS_LEFT | BS_VCENTER, 124, 150, 200, 26, hWnd, 1008);
+		btOK.Create(NULL, L"OK", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_DEFPUSHBUTTON | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 246, 189, 80, 28, hWnd, 1009);
+		btCancel.Create(NULL, L"Cancel", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 161, 189, 80, 28, hWnd, 1010);
 		this->SetDefaultButton(btOK);
 		fontArial014A.Create(L"Arial", 14, false, false, false, false);
+		gbox1.Font = fontArial014A;
 		lbDescr.Font = fontArial014A;
 		tbxDescr.Font = fontArial014A;
 		lbContact_count.Font = fontArial014A;

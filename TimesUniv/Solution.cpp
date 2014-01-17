@@ -2,10 +2,8 @@
 #include ".\Solution.h"
 
 Solution::Solution(void)
-{
-	
+{	
 }
-
 Solution::Solution(int nHours, int nRooms, int nCourse)
 {
 	this->nHours=nHours;
@@ -14,17 +12,13 @@ Solution::Solution(int nHours, int nRooms, int nCourse)
 	//sol.reserve(this->n);
 	randomGenerator.seed(::GetTickCount());
 }
-
 Solution::~Solution(void)
-{
-	
+{	
 }
-
 void Solution::SimAnnealInitialize()
 {
 	filterData();
 }
-
 void Solution::SimAnnealPerturb(Math::ISimAnneal& original, double temperature, double initialTemperature)
 {
 
@@ -93,15 +87,8 @@ void Solution::SimAnnealPerturb(Math::ISimAnneal& original, double temperature, 
 		solThu[r2][h2].classhours=auxch;
 		solThu[r2][h2].quota=auxq;
 		solThu[r2][h2].group[0]=auxg;
-
-
 	}
-	
-	
-	    
-
 }
-
 void Solution::SimAnnealCopy(const Math::ISimAnneal& source)
 {
 	Solution& ssource((Solution&)source);
@@ -116,7 +103,6 @@ void Solution::SimAnnealCopy(const Math::ISimAnneal& source)
 	solMon=ssource.solMon;
 	solThu=ssource.solThu;
 }
-
 double Solution::SimAnnealGetError()
 {
 	errorCourse err;
@@ -125,7 +111,6 @@ double Solution::SimAnnealGetError()
 	int aux=-1;
 	int sSizei, sSizej;
 	
-
 	if(solSize==0) return error;
 	error=0;
 	for(int i=0; i<solSize; i++)
@@ -137,10 +122,8 @@ double Solution::SimAnnealGetError()
 			err.grupo=(char)sol[i].group[0];
 			err.descr=L"The classroom don't support the quota";
 			errorCourses.push_back(err);
-
 		}
 	}
-
 	sSizei=solMon.size();
 	sSizej=solMon[0].size();
 	//Check error when a Professor if teaching a class in a different classroom but at the same hour
@@ -160,7 +143,6 @@ double Solution::SimAnnealGetError()
 				}
 			}
 		}
-
 	sSizei=solThu.size();
 	sSizej=solThu[0].size();
 	for(int i=0;i<sSizei;i++)
@@ -181,7 +163,6 @@ double Solution::SimAnnealGetError()
 		}
 	return error;
 }
-
 void Solution::filterData()
 {
 	wstring cmd;
@@ -191,7 +172,6 @@ void Solution::filterData()
 	int solSize=-1;
 	//needs to be modified, adding the period
 	Sys::Format(cmd,L"SELECT a.course_id, a.professor_id, c.week_hours, a.cupo, a.grupo FROM assignment a, course c, period p WHERE c.course_id=a.course_id AND p.period_id=a.period_id AND a.period_id=%d",period_id);
-	
 	
 	try  
 	{
@@ -209,7 +189,6 @@ void Solution::filterData()
 			sol.push_back(hor);
 		}
 		conn.CloseSession();
-
 	}
 	catch (Sql::SqlException e)
 	{
@@ -231,17 +210,13 @@ void Solution::filterData()
 		Sys::Format(cmd,L"SELECT COUNT(DISTINCT classtime_id) FROM classtime");
 		hour=conn.GetInt(cmd);
 		conn.CloseSession();
-
-
 	}
 	catch (Sql::SqlException e)
 	{
 		//Wintempla library it's no included here, a way to show an error? 
 		//this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
-
 	std::tr1::uniform_int<int> classDis(1, room);// uniform integer distribution, change number of the constructor, had to be the classroom range
-		
 	std::tr1::uniform_int<int> hourDis(1, hour); // uniform integer distribution, change number of the constructor, had to be the hours range
 	solSize=sol.size();
 	for(int i=0; i<solSize; i++)
@@ -251,64 +226,42 @@ void Solution::filterData()
 		sol[i].classroom=c;
 		sol[i].hour=p;
 	}
-
 	//Create a Matrix professorsxhours size, and full it with the data solution
 	//Get a count of clasrooms and professors to create the MATRIX
-	
-
-	
 	//Initialize the MATRIXs
 	room++;
 	hour++;
 	solMon.resize(room);
 	for(int i=0;i<room;i++)
 		solMon[i].resize(hour);
-	
-
-
 	solThu.resize(room);
 	for(int i=0;i<room;i++)
 		solThu[i].resize(hour);
-
-
-	
 	for(int i=0; i<solSize; i++)
-	{
-
-		
+	{		
 		if(sol[i].classhours==6 && checkData(solMon,sol[i].hour,sol[i].classroom)==true)
 		{
 			solMon[sol[i].classroom][sol[i].hour]=sol[i];
-			
 		}
 		else if(sol[i].classhours==4 && checkData(solThu,sol[i].hour,sol[i].classroom)==true)
 		{
 			solThu[sol[i].classroom][sol[i].hour]=sol[i];
 		}
-
 		else
 		{
 			sol[i].classroom=classDis(randomGenerator);
 			sol[i].hour=hourDis(randomGenerator);
 			i--;
 		}
-		
 	}
-
-
-	
 }
-
 bool Solution::checkData(vector<valarray<Asignation>> matrix, int hour, int room)
 {
 	if(matrix[room][hour].course==0 && matrix[room][hour].classroom==0)
 		return true;
 	else
 		return false;
-
 }
-
-
 int Solution::compareProfessorMondays(int prof, int hour, int classroom)
 {
 	int count=0;
@@ -317,11 +270,8 @@ int Solution::compareProfessorMondays(int prof, int hour, int classroom)
 		if(solMon[i][hour].professor==prof && classroom!=i)
 			count++;
 	}
-
 	return count;
 }
-
-
 int Solution::compareProfessorThursdays(int prof, int hour, int classroom)
 {
 	int count=0;
@@ -330,6 +280,5 @@ int Solution::compareProfessorThursdays(int prof, int hour, int classroom)
 		if(solThu[i][hour].professor==prof && classroom!=i)
 			count++;
 	}
-
 	return count;
 }

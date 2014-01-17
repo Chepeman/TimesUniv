@@ -20,18 +20,13 @@ void UpDownDlg::Window_Open(Win::Event& e)
 	ddCareer.SelectedIndex=0;
 	loadSchedule();
 }
-
-
-
 void UpDownDlg::btAddC_Click(Win::Event& e)
 {
 	AddCourseUD dlg;
 	dlg.current_period=cu_period;
 	dlg.BeginDialog(hWnd);
 	loadSchedule();
-
 }
-
 void UpDownDlg::btDeleteM_Click(Win::Event& e)
 {
 	int course_id;
@@ -59,19 +54,15 @@ void UpDownDlg::btDeleteM_Click(Win::Event& e)
 		loadSchedule();
 	}
 	else return;
-	
 }
-
 void UpDownDlg::btClose_Click(Win::Event& e)
 {
 	this->EndDialog(TRUE);
 }
-
 void UpDownDlg::ddCareer_SelChange(Win::Event& e)
 {
 	loadSchedule();
 }
-
 void UpDownDlg::loadSchedule(void)
 {
 	wstring cmd;
@@ -125,4 +116,3 @@ void UpDownDlg::loadSchedule(void)
 	}
 	lvModify.SetRedraw(true);
 }
-

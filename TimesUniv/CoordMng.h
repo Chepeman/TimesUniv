@@ -55,14 +55,14 @@ protected:
 	void GetDialogTemplate(DLGTEMPLATE& dlgTemplate)
 	{
 		dlgTemplate.cx = Sys::Convert::PixelToDlgUnitX(1198);
-		dlgTemplate.cy = Sys::Convert::PixelToDlgUnitY(557);
+		dlgTemplate.cy = Sys::Convert::PixelToDlgUnitY(564);
 		dlgTemplate.style = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP | WS_SYSMENU | WS_VISIBLE | DS_CENTER | DS_MODALFRAME;
 	}
 	//_________________________________________________
 	void InitializeGui()
 	{
-		gbox2.Create(WS_EX_TRANSPARENT, NULL, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 527, 2, 651, 535, hWnd, 1000);
-		gbox1.Create(WS_EX_TRANSPARENT, NULL, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 12, 2, 508, 535, hWnd, 1001);
+		gbox2.Create(WS_EX_TRANSPARENT, NULL, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 527, 2, 651, 542, hWnd, 1000);
+		gbox1.Create(WS_EX_TRANSPARENT, NULL, WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 12, 2, 508, 542, hWnd, 1001);
 		lvProfessor.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_ALIGNLEFT | LVS_SHOWSELALWAYS | LVS_REPORT, 18, 32, 495, 219, hWnd, 1002);
 		lvCourse.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_ALIGNLEFT | LVS_SHOWSELALWAYS | LVS_REPORT, 18, 279, 495, 219, hWnd, 1003);
 		lb1.Create(NULL, L"Courses", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 18, 261, 57, 16, hWnd, 1004);

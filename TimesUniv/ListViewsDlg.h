@@ -49,7 +49,7 @@ protected:
 	void GetDialogTemplate(DLGTEMPLATE& dlgTemplate)
 	{
 		dlgTemplate.cx = Sys::Convert::PixelToDlgUnitX(930);
-		dlgTemplate.cy = Sys::Convert::PixelToDlgUnitY(545);
+		dlgTemplate.cy = Sys::Convert::PixelToDlgUnitY(543);
 		dlgTemplate.style = WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP | WS_SYSMENU | WS_THICKFRAME | WS_VISIBLE | DS_CENTER | DS_MODALFRAME;
 	}
 	//_________________________________________________
@@ -57,7 +57,7 @@ protected:
 	{
 		toolbMain.Create(NULL, NULL, WS_CHILD | WS_VISIBLE | CCS_NORESIZE | CCS_NOPARENTALIGN | CCS_ADJUSTABLE | CCS_NODIVIDER | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS, 17, 16, 676, 44, hWnd, 1000);
 		lvMain.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | LVS_ALIGNLEFT | LVS_REPORT, 17, 63, 893, 428, hWnd, 1001);
-		btClose.Create(NULL, L"Close", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 808, 497, 102, 28, hWnd, 1002);
+		btClose.Create(NULL, L"Close", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 808, 495, 102, 28, hWnd, 1002);
 		ddCareer.Create(NULL, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_WINNORMALCASE, 697, 34, 213, 25, hWnd, 1003);
 		lb1.Create(NULL, L"Career:", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 697, 18, 50, 15, hWnd, 1004);
 		lvMain.SetExtStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
