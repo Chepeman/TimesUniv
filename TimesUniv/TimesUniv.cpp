@@ -134,21 +134,14 @@ void TimesUniv::Window_Open(Win::Event& e)
 		const int period=ddPeriod.GetSelectedIndex();
 		if(period<0)return;
 		current_period=ddPeriod.GetSelectedData();
-		wstring udCmd;
-		Sys::Format(udCmd,L"SELECT DATEDIFF(day, DATEADD(day,35,begin_date), GETDATE()) FROM period WHERE period_id=%d",current_period);
-		int isActive=-1;
+		
+		UpDownLoad(current_period);
 		try
 		{
 			conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 			//conn.OpenSession(hWnd, CONNECTION_STRING);
 
-			//______________________________________________Is Active Up/Down period?
-			isActive=conn.GetInt(udCmd);
-			if(isActive<1)
-			{
-				toolbMain.HideButton(IDM_UPDOWN, false);
-				toolbMain.EnableButton(IDM_UPDOWN, true);
-			}
+			
 			//_____________________________________________ Is Admin?
 			Sys::Format(sqlCmd,L"SELECT isAdmin FROM coordinator WHERE username='%s'",username.c_str());
 			const bool isAdmin = conn.GetBool(sqlCmd);
@@ -208,24 +201,26 @@ void TimesUniv::Window_Timer(Win::Event& e)
 			//For solMon
 			sizei=solution.solMon.size();
 			sizej=solution.solMon[0].size();
-
+			int err=-1;
 			try
 			{
 				Sql::SqlConnection conn;
 				conn.OpenSession(DSN, USERNAME, PASSWORD);
+				
 				for(int i=0; i<sizei; i++)
 				{
 					for(int j=0; j<sizej; j++)
 					{
 						if(solution.solMon[i][j].course!=0 && solution.solMon[i][j].hour!=0)
 						{
+							err=checkImage(solution.solMon[i][j].course, (char) solution.solMon[i][j].group[0]);
 							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,1,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
 							conn.ExecuteNonQuery(cmd);
 							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,3,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
 							conn.ExecuteNonQuery(cmd);
 							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,5,%d,'%c')",solution.solMon[i][j].course,solution.solMon[i][j].hour,solution.solMon[i][j].group[0]);
 							conn.ExecuteNonQuery(cmd);
-							Sys::Format(cmd,L"INSERT INTO perturbation(professor_id, course_id, classroom_id,grupo)VALUES(%d,%d,%d,'%c')",solution.solMon[i][j].professor,solution.solMon[i][j].course, solution.solMon[i][j].classroom,solution.solMon[i][j].group[0]);
+							Sys::Format(cmd,L"INSERT INTO perturbation(professor_id, course_id, classroom_id,grupo,error)VALUES(%d,%d,%d,'%c',%d)",solution.solMon[i][j].professor,solution.solMon[i][j].course, solution.solMon[i][j].classroom,solution.solMon[i][j].group[0],err);
 							conn.ExecuteNonQuery(cmd);	
 						}
 					}
@@ -251,11 +246,12 @@ void TimesUniv::Window_Timer(Win::Event& e)
 					{
 						if(solution.solThu[i][j].course!=0 && solution.solThu[i][j].hour!=0)
 						{
+							err=checkImage(solution.solThu[i][j].course, (char)solution.solThu[i][j].group[0]);
 							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,2,%d,'%c')",solution.solThu[i][j].course,solution.solThu[i][j].hour,solution.solThu[i][j].group[0]);
 							conn.ExecuteNonQuery(cmd);
 							Sys::Format(cmd,L"INSERT INTO course_time(course_id,week_day_id,classtime_id,grupo)VALUES(%d,4,%d,'%c')",solution.solThu[i][j].course,solution.solThu[i][j].hour,solution.solThu[i][j].group[0]);
 							conn.ExecuteNonQuery(cmd);
-							Sys::Format(cmd,L"INSERT INTO perturbation(professor_id, course_id, classroom_id,grupo)VALUES(%d,%d,%d,'%c')",solution.solThu[i][j].professor,solution.solThu[i][j].course, solution.solThu[i][j].classroom,solution.solThu[i][j].group[0]);
+							Sys::Format(cmd,L"INSERT INTO perturbation(professor_id, course_id, classroom_id,grupo,error)VALUES(%d,%d,%d,'%c',%d)",solution.solThu[i][j].professor,solution.solThu[i][j].course, solution.solThu[i][j].classroom,solution.solThu[i][j].group[0],err);
 							conn.ExecuteNonQuery(cmd);		
 						}
 					}
@@ -404,6 +400,7 @@ void TimesUniv::btExport_Click(Win::Event& e)
 	dlg.period_id=period_id;
 	dlg.BeginDialog(hWnd);
 	loadProposals();
+	UpDownLoad(period_id);
 }
 
 void TimesUniv::loadAssignments()
@@ -581,12 +578,13 @@ void TimesUniv::loadProposals() //finish this function
 		{
 			conn.OpenSession(DSN, USERNAME, PASSWORD);
 			conn.ExecuteSelect(cmd,100,lvProposal);
-			Sys::Format(cmd, L"SELECT course_id, professor_id, classroom_id, grupo FROM perturbation ORDER BY course_id, grupo");
+			Sys::Format(cmd, L"SELECT course_id, professor_id, classroom_id, grupo,error FROM perturbation ORDER BY course_id, grupo");
 			conn.ExecuteSelect(cmd);
 			conn.BindColumn(1,IDs.course);
 			conn.BindColumn(2,IDs.professor);
 			conn.BindColumn(3,IDs.classroom);
 			conn.BindColumn(4, IDs.group,2);
+			conn.BindColumn(5,IDs.err);
 			while(conn.Fetch())
 			{
 				idsol.push_back(IDs);
@@ -604,8 +602,7 @@ void TimesUniv::loadProposals() //finish this function
 		int idsolSize=idsol.size();
 		for(int i=0;i<idsolSize;i++)
 		{
-			resultCheck=checkImage(idsol[i].course, (char)idsol[i].group[0]);
-			lvProposal.Items[i].SetImageIndex(resultCheck);
+			lvProposal.Items[i].SetImageIndex(idsol[i].err);
 		}
 		btGenerate.SetEnable(true);
 	}
@@ -622,6 +619,7 @@ void TimesUniv::loadProposals() //finish this function
 		lvProposal.Cols.Add(4, LVCFMT_LEFT, 80,  L"Days");
 		lvProposal.Cols.Add(5, LVCFMT_LEFT, 150,  L"Classtime");
 		lvProposal.Cols.Add(6, LVCFMT_LEFT, 70,  L"Group");
+		lvProposal.SetImageList(imageList,true);
 		Sys::Format(cmd,L"SELECT c.course_key,c.descr,p.last_name_p+' '+p.last_name_m+', '+p.name,cl.descr,\
 								CASE w.week_day_id\
 									WHEN 1 THEN 'Mon-Wen-Fri'\
@@ -647,6 +645,9 @@ void TimesUniv::loadProposals() //finish this function
 			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 		}
 		btGenerate.SetEnable(false);
+		int countLv=lvProposal.Items.Count;
+		for(int i=0;i<countLv;i++)
+			lvProposal.Items[i].SetImageIndex(1);
 
 	}
 	lvProposal.SetRedraw(true);
@@ -656,6 +657,7 @@ void TimesUniv::ddPeriod_SelChange(Win::Event& e)
 {
 	loadAssignments();
 	loadProposals();
+	UpDownLoad(ddPeriod.GetSelectedData());
 }
 void TimesUniv::ddCareer_SelChange(Win::Event& e)
 {
@@ -704,4 +706,40 @@ wstring TimesUniv::checkErrorDescription(int course, char group)
 			return solution.errorCourses[i].descr;
 	} 
 	return L"There's no error on this assignation";
+}
+
+void TimesUniv::UpDownLoad(int period_idd)
+{
+	wstring udCmd;
+	int isActive=-1;
+	Sql::SqlConnection	conn;
+	int isSche;
+	Sys::Format(udCmd,L"SELECT DATEDIFF(day, DATEADD(day,35,begin_date), GETDATE()) FROM period WHERE period_id=%d",period_idd);
+	try
+	{
+		conn.OpenSession(DSN, USERNAME,PASSWORD);
+		isActive=conn.GetInt(udCmd);
+		if(isActive<1 && isActive>-36)
+		{
+			Sys::Format(udCmd,L"SELECT COUNT(*) FROM schedule WHERE period_id=%d",period_idd);
+			isSche=conn.GetInt(udCmd);
+			if(isSche>0)
+			{
+				toolbMain.HideButton(IDM_UPDOWN, false);
+				toolbMain.EnableButton(IDM_UPDOWN, true);
+			}
+		}
+		else
+		{
+			toolbMain.HideButton(IDM_UPDOWN, true);
+			toolbMain.EnableButton(IDM_UPDOWN, false);
+
+		}
+		conn.CloseSession();
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+	
 }

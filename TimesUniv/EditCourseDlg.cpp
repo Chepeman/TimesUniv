@@ -131,6 +131,15 @@ void EditCourseDlg::btOk_Click(Win::Event& e)
 				return;
 			}
 		}
+
+		Sys::Format(cmd,L"UPDATE perturbation SET error=1 WHERE course_id=%d AND grupo='%c'",course_id,group);
+		conn.ExecuteNonQuery(cmd);
+		if (rows!=1)
+		{
+			this->MessageBox(Sys::Convert::ToString(rows), L"Error: number of affected rows", MB_OK | MB_ICONERROR);
+			return;
+		}
+
 	}
 	catch(Sql::SqlException e)
 	{

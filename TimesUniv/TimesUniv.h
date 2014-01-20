@@ -18,6 +18,7 @@ struct CoursesID //Needs to be modified, adding the quota and professor hours
 	int classroom;
 	wchar_t group[2];
 	int hola;
+	int err;
 };
 
 class TimesUniv: public Win::Window
@@ -44,6 +45,7 @@ public:
 	wstring checkErrorDescription(int course, char group);
 	bool isCLickleable;
 	int current_period;
+	void UpDownLoad(int period_idd);
 protected:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
 	Win::Toolbar toolbMain;
