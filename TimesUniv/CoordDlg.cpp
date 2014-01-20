@@ -12,7 +12,7 @@ void CoordDlg::Window_Open(Win::Event& e)
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 		//conn.OpenSession(hWnd, CONNECTION_STRING);
-		conn.ExecuteSelect(L"SELECT program_id, descr FROM program", 100, ddProgram);
+		conn.ExecuteSelect(L"SELECT program_id, career_name FROM program", 100, ddProgram);
 		ddProgram.SelectedIndex=0;
 		UpdateddProf();
 		if (coordinator_id < 0) return;
@@ -20,9 +20,7 @@ void CoordDlg::Window_Open(Win::Event& e)
 		conn.ExecuteSelect(cmd);
 		conn.BindColumn(1, ddProfessor);
 		conn.BindColumn(2, ddProgram);
-		//tbxUsername.MaxText = 13;
 		conn.BindColumn(3, tbxUsername, 128);
-		//tbxPass.MaxText = 13;
 		conn.BindColumn(4, tbxPass, 128);
 		conn.BindColumn(5, ckIsadmin);
 		if (conn.Fetch() == false)
@@ -89,7 +87,7 @@ void CoordDlg::UpdateddProf()
 	ddProfessor.SetRedraw(false);
 	ddProfessor.Items.DeleteAll();
 	wstring cmd;
-	int program_id;
+	int program_id,dept;
 	program_id=ddProgram.SelectedData;
 
 	Sql::SqlConnection conn;
@@ -97,14 +95,19 @@ void CoordDlg::UpdateddProf()
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 		//conn.OpenSession(hWnd, CONNECTION_STRING);
-		Sys::Format(cmd, L"SELECT p.professor_id, p.last_name_p+' '+p.last_name_m+', '+p.name AS Prof\
-						  FROM professor p, department d, program pg\
-						  WHERE p.department_id=d.department_id\
-								AND d.department_id=pg.department_id\
-								AND pg.program_id=%d\
-								ORDER BY Prof", program_id);
+		Sys::Format(cmd,L"SELECT department_id FROM program WHERE program_id=%d",program_id);
+		dept=conn.GetInt(cmd);
+		if(dept!=1)
+		{
+			Sys::Format(cmd,L"SELECT p.professor_id,p.last_name_p+' '+p.last_name_m+', '+p.name,p.email FROM professor p, program pr, department d \
+						 WHERE p.department_id=d.department_id AND d.department_id=pr.department_id AND pr.program_id=%d ORDER BY p.last_name_p",program_id);
+		}
+		else
+		{
+			Sys::Format(cmd,L"SELECT p.professor_id,p.last_name_p+' '+p.last_name_m+', '+p.name FROM professor p ORDER BY p.last_name_p");
+		}
 		conn.ExecuteSelect(cmd, 100, ddProfessor);
-		//ddProfessor.SelectedIndex=0;
+		ddProfessor.SelectedIndex=0;
 	}
 	catch (Sql::SqlException e)
 	{

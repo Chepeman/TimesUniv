@@ -116,6 +116,7 @@ void ProfDlg::btOK_Click(Win::Event& e)
 			this->MessageBox(Sys::Convert::ToString(rows), L"Error: number of affected rows", MB_OK | MB_ICONERROR);
 			return;
 		}
+		if(professor_id==-1)professor_id=conn.GetInt(L"SELECT SCOPE_IDENTITY() FROM professor");
 		
 		int i, j, days, hours, day_id, hour_id;
 		days=conn.GetInt(L"SELECT COUNT(*) FROM week_day");

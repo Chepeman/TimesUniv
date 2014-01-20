@@ -11,6 +11,7 @@ void ProgramDlg::Window_Open(Win::Event& e)
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 		//conn.OpenSession(hWnd, CONNECTION_STRING);
 		conn.ExecuteSelect(L"SELECT department_id, descr FROM department", 100, ddDepartment);
+		ddDepartment.SelectedIndex=0;
 		if (program_id < 0) return;
 		Sys::Format(cmd, L"SELECT descr, career_name, department_id FROM program WHERE program_id=%d", program_id);
 		conn.ExecuteSelect(cmd);

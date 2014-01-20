@@ -69,6 +69,8 @@ protected:
 		toolbMain.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_BORDER, DOCK_NONE);
 		lvMain.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_BORDER, DOCK_BORDER);
 		btClose.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
+		ddCareer.SetDock(DOCK_NONE, DOCK_BORDER, DOCK_BORDER, DOCK_NONE);
+		lb1.SetDock(DOCK_NONE, DOCK_BORDER, DOCK_BORDER, DOCK_NONE);
 	}
 	//_________________________________________________
 	void lvMain_ItemChanged(Win::Event& e);

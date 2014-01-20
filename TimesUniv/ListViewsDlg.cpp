@@ -312,7 +312,7 @@ void ListViewsDlg::UpdateLvCoord()
          //conn.OpenSession(hWnd, CONNECTION_STRING);
          conn.ExecuteSelect(L"SELECT c.coordinator_id, p.last_name_p+' '+p.last_name_m+', '+p.name, pg.career_name, pg.descr, c.username\
 							  FROM professor p, program pg, coordinator c\
-							  WHERE c.program_id=pg.program_id AND c.professor_id=p.professor_id ORDER BY c.coordinator_id", 100, lvMain);
+							  WHERE c.program_id=pg.program_id AND c.professor_id=p.professor_id ORDER BY pg.program_id", 100, lvMain);
     }
     catch (Sql::SqlException e)
     {
