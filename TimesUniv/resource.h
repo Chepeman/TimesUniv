@@ -62,6 +62,8 @@
 #define IDM_CLASSTIME                   32793
 #define ID_UPDOWN                       32795
 #define IDM_UPDOWN                      32795
+#define IDM_ADDSCH                      32797
+#define IDM_DELETESCH                   32798
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -69,7 +71,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        164
-#define _APS_NEXT_COMMAND_VALUE         32797
+#define _APS_NEXT_COMMAND_VALUE         32800
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           104
 #endif

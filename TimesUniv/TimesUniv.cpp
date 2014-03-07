@@ -16,90 +16,104 @@ void TimesUniv::Window_Open(Win::Event& e)
 
 	toolbMain.Destroy();
 	toolbMain.Create(NULL, NULL, WS_CHILD | WS_VISIBLE | CCS_NORESIZE | CCS_NOPARENTALIGN | CCS_ADJUSTABLE | CCS_NODIVIDER | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS, 18, 1, 964, 42, hWnd, 1000);
-
 	//________________________________________________________ toolbMain
-	TBBUTTON tbButton[9];//<< EDIT HERE THE NUMBER OF BUTTONS
+	TBBUTTON tbButton[11];//<< EDIT HERE THE NUMBER OF BUTTONS
 
-	toolbMain.imageList.Create(22, 22, 9);//<< EDIT HERE THE NUMBER OF IMAGES
+	toolbMain.imageList.Create(22, 22, 8);//<< EDIT HERE THE NUMBER OF IMAGES
+	toolbMain.imageList.AddIcon(this->hInstance, IDI_ADD);
+	toolbMain.imageList.AddIcon(this->hInstance, IDI_DELETE);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_COORDINATOR);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_PROFESSOR);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CAREER);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_COURSE);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_DEPT);
-	toolbMain.imageList.AddIcon(this->hInstance, IDI_PERIOD);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CLASSROOM);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_CLASSTIME);
 	toolbMain.imageList.AddIcon(this->hInstance, IDI_UPDOWN);
 
-	toolbMain.SendMessage(TB_BUTTONSTRUCTSIZE, (WPARAM)(int)sizeof(TBBUTTON), 0); 
+	toolbMain.SendMessage(TB_BUTTONSTRUCTSIZE, (WPARAM)(int)sizeof(TBBUTTON), 0);
+
 	toolbMain.SetImageList(toolbMain.imageList);
-	//_____________________________________
 	tbButton[0].iBitmap=MAKELONG(0, 0); //<< IMAGE INDEX
-	tbButton[0].idCommand=IDM_COORDINATOR;
+	tbButton[0].idCommand=IDM_ADDSCH;
 	tbButton[0].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
 	tbButton[0].fsStyle=BTNS_BUTTON;
 	tbButton[0].dwData=0L; 
-	tbButton[0].iString= (LONG_PTR)L"Coordinator";
+	tbButton[0].iString= (LONG_PTR)L"Add Schedule";
 	//_____________________________________
 	tbButton[1].iBitmap=MAKELONG(1, 0); //<< IMAGE INDEX
-	tbButton[1].idCommand=IDM_PROFESSOR;
+	tbButton[1].idCommand=IDM_DELETESCH;
 	tbButton[1].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
 	tbButton[1].fsStyle=BTNS_BUTTON;
 	tbButton[1].dwData=0L; 
-	tbButton[1].iString= (LONG_PTR)L"Professor";
+	tbButton[1].iString= (LONG_PTR)L"Delete Schedule";
 	//_____________________________________
-	tbButton[2].iBitmap=MAKELONG(2, 0); //<< IMAGE INDEX
-	tbButton[2].idCommand=IDM_CAREER;
+	tbButton[2].iBitmap=-1;
+	tbButton[2].idCommand=0;  
 	tbButton[2].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
-	tbButton[2].fsStyle=BTNS_BUTTON;
-	tbButton[2].dwData=0L; 
-	tbButton[2].iString= (LONG_PTR)L"Program";
+	tbButton[2].fsStyle=BTNS_SEP;  
+	tbButton[2].dwData=0L;  
+	tbButton[2].iString=0;  
 	//_____________________________________
-	tbButton[3].iBitmap=MAKELONG(3, 0); //<< IMAGE INDEX
-	tbButton[3].idCommand=IDM_COURSE;
+	tbButton[3].iBitmap=MAKELONG(2, 0); //<< IMAGE INDEX
+	tbButton[3].idCommand=IDM_COORDINATOR;
 	tbButton[3].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
 	tbButton[3].fsStyle=BTNS_BUTTON;
 	tbButton[3].dwData=0L; 
-	tbButton[3].iString= (LONG_PTR)L"Course";
+	tbButton[3].iString= (LONG_PTR)L"Coordinator";
 	//_____________________________________
-	tbButton[4].iBitmap=MAKELONG(4, 0); //<< IMAGE INDEX
-	tbButton[4].idCommand=IDM_DEPT;
+	tbButton[4].iBitmap=MAKELONG(3, 0); //<< IMAGE INDEX
+	tbButton[4].idCommand=IDM_PROFESSOR;
 	tbButton[4].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
 	tbButton[4].fsStyle=BTNS_BUTTON;
 	tbButton[4].dwData=0L; 
-	tbButton[4].iString= (LONG_PTR)L"Department";
-	//____________________________________
-	tbButton[5].iBitmap=MAKELONG(5, 0); //<< IMAGE INDEX
-	tbButton[5].idCommand=IDM_PERIOD;
+	tbButton[4].iString= (LONG_PTR)L"Professor";
+	//_____________________________________
+	tbButton[5].iBitmap=MAKELONG(4, 0); //<< IMAGE INDEX
+	tbButton[5].idCommand=IDM_CAREER;
 	tbButton[5].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
 	tbButton[5].fsStyle=BTNS_BUTTON;
 	tbButton[5].dwData=0L; 
-	tbButton[5].iString= (LONG_PTR)L"Period";
+	tbButton[5].iString= (LONG_PTR)L"Program";
 	//_____________________________________
-	tbButton[6].iBitmap=MAKELONG(6, 0); //<< IMAGE INDEX
-	tbButton[6].idCommand=IDM_CLASSROOM;
+	tbButton[6].iBitmap=MAKELONG(5, 0); //<< IMAGE INDEX
+	tbButton[6].idCommand=IDM_COURSE;
 	tbButton[6].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
 	tbButton[6].fsStyle=BTNS_BUTTON;
 	tbButton[6].dwData=0L; 
-	tbButton[6].iString= (LONG_PTR)L"Classroom";
+	tbButton[6].iString= (LONG_PTR)L"Course";
 	//_____________________________________
-	tbButton[7].iBitmap=MAKELONG(7, 0); //<< IMAGE INDEX
-	tbButton[7].idCommand=IDM_CLASSTIME;
+	tbButton[7].iBitmap=MAKELONG(6, 0); //<< IMAGE INDEX
+	tbButton[7].idCommand=IDM_DEPT;
 	tbButton[7].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
 	tbButton[7].fsStyle=BTNS_BUTTON;
 	tbButton[7].dwData=0L; 
-	tbButton[7].iString= (LONG_PTR)L"Time";
+	tbButton[7].iString= (LONG_PTR)L"Department";
 	//_____________________________________
-	tbButton[8].iBitmap=MAKELONG(8, 0); //<< IMAGE INDEX
-	tbButton[8].idCommand=IDM_UPDOWN;
-	tbButton[8].fsState=TBSTATE_HIDDEN; // | TBSTATE_WRAP
+	tbButton[8].iBitmap=MAKELONG(7, 0); //<< IMAGE INDEX
+	tbButton[8].idCommand=IDM_CLASSROOM;
+	tbButton[8].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
 	tbButton[8].fsStyle=BTNS_BUTTON;
 	tbButton[8].dwData=0L; 
-	tbButton[8].iString= (LONG_PTR)L"Up/Down";
+	tbButton[8].iString= (LONG_PTR)L"Classroom";
+	//_____________________________________
+	tbButton[9].iBitmap=MAKELONG(8, 0); //<< IMAGE INDEX
+	tbButton[9].idCommand=IDM_CLASSTIME;
+	tbButton[9].fsState=TBSTATE_ENABLED; // | TBSTATE_WRAP
+	tbButton[9].fsStyle=BTNS_BUTTON;
+	tbButton[9].dwData=0L; 
+	tbButton[9].iString= (LONG_PTR)L"Time";
+	//_____________________________________
+	tbButton[10].iBitmap=MAKELONG(9, 0); //<< IMAGE INDEX
+	tbButton[10].idCommand=IDM_UPDOWN;
+	tbButton[10].fsState=TBSTATE_HIDDEN; // | TBSTATE_WRAP
+	tbButton[10].fsStyle=BTNS_BUTTON;
+	tbButton[10].dwData=0L; 
+	tbButton[10].iString= (LONG_PTR)L"Up/Down";
 
 	toolbMain.SetBitmapSize(20, 20);
 	toolbMain.SetButtonSize(24, 22);
-	toolbMain.AddButtons(tbButton, 9);// << EDIT HERE THE NUMBER OF BUTTONS
+	toolbMain.AddButtons(tbButton, 11);// << EDIT HERE THE NUMBER OF BUTTONS
 	toolbMain.SendMessage(TB_AUTOSIZE, 0, 0);
 	toolbMain.SetMaxTextRows(1);// EDIT HERE TO DISPLAY THE BUTTON TEXT
 	toolbMain.Show(SW_SHOWNORMAL);
@@ -109,7 +123,6 @@ void TimesUniv::Window_Open(Win::Event& e)
 		Sql::SqlConnection conn;
 		conn.OpenSession(DSN,USERNAME,PASSWORD);
 		conn.ExecuteSelect(L"SELECT program_id, career_name FROM program", 200, ddCareer);
-		conn.ExecuteSelect(L"SELECT * FROM period ORDER BY period_id DESC", 100, ddPeriod);
 	}
 	catch (Sql::SqlException e)
 	{
@@ -120,7 +133,6 @@ void TimesUniv::Window_Open(Win::Event& e)
 	if (dlg.BeginDialog(hWnd) == TRUE) //__________________ Give Access
 	{
 		ddCareer.SelectedIndex=0;
-		ddPeriod.SelectedIndex=0;
 		loadAssignments();
 		loadProposals();
 		this->Text = L"Welcome Academic Secretary";
@@ -131,9 +143,8 @@ void TimesUniv::Window_Open(Win::Event& e)
 		wstring username=dlg.tbxUser.Text;
 		wstring password=dlg.tbxPass.Text;
 		//_______________________________Check the Up-Down date
-		const int period=ddPeriod.GetSelectedIndex();
-		if(period<0)return;
-		current_period=ddPeriod.GetSelectedData();
+		const int period = 1;
+		current_period = 1;
 		
 		UpDownLoad(current_period);
 		try
@@ -148,7 +159,6 @@ void TimesUniv::Window_Open(Win::Event& e)
 			//
 			if (isAdmin == false)
 			{
-				ddPeriod.Items.DeleteAll();
 				ddCareer.Items.DeleteAll();
 				lvProposal.Items.DeleteAll();
 				lvAsign.Items.DeleteAll();
@@ -165,7 +175,6 @@ void TimesUniv::Window_Open(Win::Event& e)
 		{
 			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 		}
-		 
 	}
 	else
 	{
@@ -270,6 +279,12 @@ void TimesUniv::Window_Timer(Win::Event& e)
 	}
 }
 
+void TimesUniv::Cmd_Addsch(Win::Event& e)
+{
+}
+void TimesUniv::Cmd_Deletesch(Win::Event& e)
+{
+}
 void TimesUniv::Cmd_Coordinator(Win::Event& e)
 {
 	ListViewsDlg dlg;
@@ -300,12 +315,6 @@ void TimesUniv::Cmd_Dept(Win::Event& e)
 	dlg.selected=DEPARTMENT;
 	dlg.BeginDialog(hWnd);
 }
-void TimesUniv::Cmd_Period(Win::Event& e)
-{
-	ListViewsDlg dlg;
-	dlg.selected=PERIOD;
-	dlg.BeginDialog(hWnd);
-}
 void TimesUniv::Cmd_Classroom(Win::Event& e)
 {
 	ListViewsDlg dlg;
@@ -329,7 +338,6 @@ void TimesUniv::Cmd_Updown(Win::Event& e)
 
 void TimesUniv::btClose_Click(Win::Event& e)
 {
-	ddPeriod.Items.DeleteAll();
 	ddCareer.Items.DeleteAll();
 	lvProposal.Items.DeleteAll();
 	lvAsign.Items.DeleteAll();
@@ -344,9 +352,8 @@ void TimesUniv::btGenerate_Click(Win::Event& e)
 	wstring cmd;
 	Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment");
 	//std::vector<Asignation> solution;
-	const int period=ddPeriod.GetSelectedIndex();
-	if(period<0)return;
-	int period_id=ddPeriod.GetSelectedData();
+	const int period=1;
+	int period_id=1;
 	
 	try
 	{
@@ -397,9 +404,8 @@ void TimesUniv::btGenerate_Click(Win::Event& e)
 void TimesUniv::btExport_Click(Win::Event& e)
 {
 	ScheduleDlg dlg;
-	const int period=ddPeriod.GetSelectedIndex();
-	if(period<0)return;
-	int period_id=ddPeriod.GetSelectedData();
+	const int period=1;
+	int period_id=1;
 	dlg.period_id=period_id;
 	dlg.BeginDialog(hWnd);
 	loadProposals();
@@ -415,9 +421,8 @@ void TimesUniv::loadAssignments()
 	lvAsign.Cols.Add(1, LVCFMT_LEFT, 180, L"Course");
 	lvAsign.Cols.Add(2, LVCFMT_LEFT, 180, L"Professor");
 	lvAsign.Cols.Add(3, LVCFMT_RIGHT, 60, L"Quota");
-	const int period2=ddPeriod.GetSelectedIndex();
-	if(period2<0)return;
-	int period_id2=ddPeriod.GetSelectedData();
+	const int period2=1;
+	int period_id2=1;
 	Sql::SqlConnection conn;
 	int count;
 	wstring cmd;
@@ -428,8 +433,8 @@ void TimesUniv::loadAssignments()
 	const int career=ddCareer.GetSelectedIndex();
 	career_id=ddCareer.Items[career].GetData();
 
-	const int period=ddPeriod.GetSelectedIndex();
-	period_id=ddPeriod.Items[period].GetData();
+	const int period=1;
+	period_id=1;
 	try
 	{
 		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period_id2);
@@ -481,8 +486,6 @@ void TimesUniv::loadAssignments()
 			this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 		}
 	}
-
-
 	else
 	{
 		Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name \
@@ -530,9 +533,8 @@ void TimesUniv::loadProposals() //finish this function
 	int count=-1;
 	Sql::SqlConnection conn;
 	wstring cmd;
-	const int period=ddPeriod.GetSelectedIndex();
-	if(period<0)return;
-	int period_id=ddPeriod.GetSelectedData();
+	const int period=1;
+	int period_id=1;
 
 	try
 	{
@@ -651,17 +653,10 @@ void TimesUniv::loadProposals() //finish this function
 		int countLv=lvProposal.Items.Count;
 		for(int i=0;i<countLv;i++)
 			lvProposal.Items[i].SetImageIndex(1);
-
 	}
 	lvProposal.SetRedraw(true);
 }
 
-void TimesUniv::ddPeriod_SelChange(Win::Event& e)
-{
-	loadAssignments();
-	loadProposals();
-	UpDownLoad(ddPeriod.GetSelectedData());
-}
 void TimesUniv::ddCareer_SelChange(Win::Event& e)
 {
 	loadAssignments();
@@ -673,9 +668,8 @@ void TimesUniv::lvProposal_DblClk(Win::Event& e)
 {
 	if(isCLickleable==false) return;
 	int index=-1;
-	const int period=ddPeriod.GetSelectedIndex();
-	if(period<0)return;
-	int period_id=ddPeriod.GetSelectedData();
+	const int period=1;
+	int period_id=1;
 	EditCourseDlg dlg;
 	index=lvProposal.GetSelectedIndex();
 	if(index<0) return;
@@ -689,6 +683,7 @@ void TimesUniv::lvProposal_DblClk(Win::Event& e)
 	dlg.BeginDialog(hWnd);
 	loadProposals();
 }
+
 int TimesUniv::checkImage(int course, char group)
 {
 	int solSize=solution.errorCourses.size();
@@ -699,7 +694,6 @@ int TimesUniv::checkImage(int course, char group)
 	}
 	return 1;
 }
-
 wstring TimesUniv::checkErrorDescription(int course, char group)
 {
 	int solSize=solution.errorCourses.size();
@@ -744,5 +738,4 @@ void TimesUniv::UpDownLoad(int period_idd)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
-	
 }

@@ -1,158 +1,291 @@
-#include "stdafx.h"  //_____________________________________________ ProfDlg.cpp
-#include "ProfDlg.h"
+#include "stdafx.h"  //_____________________________________________ CoordMng.cpp
+#include "CoordMng.h"
 
-void ProfDlg::Window_Open(Win::Event& e)
+void CoordMng::Window_Open(Win::Event& e)
 {
-	int dept_id=0;
-	bool promep,sni;
-	this->Text=L"Professor";
-	Sql::SqlConnection conn;
+	this->AlwaysOnTop(true);
+	int dept;
 	wstring cmd;
+	//________________________________________________________ lvProfessor
+	lvProfessor.Cols.Add(0, LVCFMT_LEFT, 250, L"Name");
+	lvProfessor.Cols.Add(1, LVCFMT_RIGHT, 150, L"Email");
+	lvProfessor.Cols.Add(2, LVCFMT_RIGHT, 80, L"Extension");
+	//________________________________________________________ lvCourse
+	lvCourse.Cols.Add(0, LVCFMT_LEFT, 150, L"Course Key");
+	lvCourse.Cols.Add(1, LVCFMT_LEFT, 300, L"Course");
+	try
+	{
+		Sql::SqlConnection conn;
+		conn.OpenSession(DSN,USERNAME,PASSWORD);
+		Sys::Format(cmd,L"SELECT department_id FROM program WHERE program_id=%d",career_id);
+		dept=conn.GetInt(cmd);
+		if(dept!=1)
+		{
+			Sys::Format(cmd,L"SELECT p.professor_id,p.last_name_p+' '+p.last_name_m+', '+p.name,p.email,p.extension FROM professor p, program pr, department d \
+						 WHERE p.department_id=d.department_id AND d.department_id=pr.department_id AND pr.program_id=%d ORDER BY p.last_name_p",career_id);
+		}
+		else
+		{
+			Sys::Format(cmd,L"SELECT p.professor_id,p.last_name_p+' '+p.last_name_m+', '+p.name,p.email,p.extension FROM professor p ORDER BY p.last_name_p");
+		}
+		conn.ExecuteSelect(cmd, 100, lvProfessor);
+		Sys::Format(cmd,L"SELECT c.course_id, c.course_key, c.descr FROM course c, prog_course pc, program p WHERE c.course_id=pc.course_id AND pc.program_id=p.program_id AND pc.program_id=%d",career_id);
+		conn.ExecuteSelect(cmd, 100, lvCourse);
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+	this->Text=L"Welcome Coordinator";
+	loadAssignments();
+}
+void CoordMng::Window_Close(Win::Event& e)
+{
+	this->EndDialog(TRUE);
+}
+void CoordMng::btAdd_Click(Win::Event& e)
+{
+	//_____________________________________________________________ Validate
+	tr1::wregex regextbxCupo(L"[1-9][0-9]?");
+	if (tr1::regex_match(tbxCupo.Text, regextbxCupo) == false)
+	{
+		tbxCupo.ShowBalloonTip(L"Invalid Quota", L"Please provide a number between 5 and 99", TTI_ERROR);
+		return;
+	}
+	wstring cmd;
+	char group='A';
+	int course_id,professor_id,period_id,cupo,no_groups,rows,coord_id,count;
+
+	const int course=lvCourse.GetSelectedIndex();
+	if(course<0)
+	{
+		this->MessageBox(L"You have not selected a course",L"Invalid Course",MB_ICONERROR);
+		return;
+	}
+	course_id=lvCourse.Items[course].Data;
+
+	const int professor=lvProfessor.GetSelectedIndex();
+	if(professor<0)
+	{
+		this->MessageBox(L"You have not selected a professor",L"Invalid Professor",MB_ICONERROR);
+		return;
+	}
+	professor_id=lvProfessor.Items[professor].Data;
+
+	const int period=1;
+	period_id=1;
+
+	cupo=tbxCupo.GetInt(); 
+	if(cupo<5 || cupo==0)
+	{ 
+		tbxCupo.ShowBalloonTip(L"Invalid Quota", L"The quota must be greater than 5", TTI_ERROR);
+		return;
+	}
+
+	Sql::SqlConnection conn;
+
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 		//conn.OpenSession(hWnd, CONNECTION_STRING);
-		conn.ExecuteSelect(L"SELECT department_id, descr FROM department ORDER BY department_id", 100, ddDepartment);
-		clDays.Cols.Add(0, LVCFMT_LEFT, 100, L"Day");
-		conn.ExecuteSelect(L"SELECT * FROM week_day ORDER BY week_day_id", 100, clDays);
-		clHours.Cols.Add(0, LVCFMT_LEFT, 100, L"Hours");
-		conn.ExecuteSelect(L"SELECT classtime_id, CONVERT(varchar(15),begin_time,100) + ' - ' + CONVERT(varchar(15),end_time,100)\
-							 FROM classtime ORDER BY classtime_id", 100, clHours);
-		if (professor_id < 0)
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period_id);
+		count=conn.GetInt(cmd);
+		if(count>0)
 		{
-			ddDepartment.SelectedIndex=dept_id;
+			this->MessageBox(L"Schedule of this period already been generated", L"Registration could not be admitted", MB_OK | MB_ICONERROR);
 			return;
 		}
-		Sys::Format(cmd, L"SELECT last_name_p, last_name_m, name, email, extension, department_id, promep, sni FROM professor WHERE professor_id=%d", professor_id);
-		conn.ExecuteSelect(cmd);
-		//tbxLast_name_p.MaxText = 20;
-		conn.BindColumn(1, tbxLast_name_p, 128);
-		//tbxLast_name_m.MaxText = 20;
-		conn.BindColumn(2, tbxLast_name_m, 128);
-		//tbxName.MaxText = 40;
-		conn.BindColumn(3, tbxName, 128);
-		//tbxEmail.MaxText = 60;
-		conn.BindColumn(4, tbxEmail, 128);
-		tbxExtension.Number=true;
-		conn.BindColumn(5, tbxExtension, 128);
-		conn.BindColumn(6, dept_id);
-		conn.BindColumn(7, promep);
-		conn.BindColumn(8, sni);
-		if (conn.Fetch() == false)
+
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM assignment WHERE professor_id=%d AND course_id=%d", professor_id, course_id);
+		count=conn.GetInt(cmd);
+		if(count>0)
 		{
-			this->MessageBox(L"No data was returned", L"Error", MB_OK);
+			Sys::Format(cmd,L"There are %d group(s) of this course with that professor, sure you want to add another?",count);
+			if(this->MessageBox(cmd, L"Already exists", MB_YESNO | MB_ICONQUESTION)==IDNO) return;
 		}
 		
-		int id;
-		Sys::Format(cmd,L"SELECT week_day_id FROM time_prof WHERE professor_id=%d GROUP BY week_day_id",professor_id);
-		conn.ExecuteSelect(cmd);
-		conn.BindColumn(1,id);
-		while(conn.Fetch())
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM assignment WHERE course_id=%d",course_id);
+		no_groups=conn.GetInt(cmd);
+
+		group+=no_groups;
+
+		Sys::Format(cmd,L"SELECT coordinator_id FROM coordinator WHERE program_id=%d",career_id);
+		coord_id=conn.GetInt(cmd);
+		
+		Sys::Format(cmd,L"INSERT INTO assignment VALUES(%d,%d,%d,%d,'%c',%d)",course_id,professor_id,period_id,cupo,group,coord_id);
+		rows = conn.ExecuteNonQuery(cmd);
+		if (rows!=1)
 		{
-			clDays.Items[id-1].Checked=true;
-		}
-		Sys::Format(cmd,L"SELECT classtime_id FROM time_prof WHERE professor_id=%d GROUP BY classtime_id",professor_id);
-		conn.ExecuteSelect(cmd);
-		conn.BindColumn(1,id);
-		while(conn.Fetch())
-		{
-			clHours.Items[id-1].Checked=true;
+			this->MessageBox(L"Registration could not be admitted", L"Error", MB_OK | MB_ICONERROR);
+			return;
 		}
 	}
 	catch (Sql::SqlException e)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
-	ddDepartment.SelectedIndex=dept_id-1;
-	if(promep)ckPromep.Checked=true;
-	if(sni)ckSni.Checked=true;
+	loadAssignments();
 }
-void ProfDlg::btOK_Click(Win::Event& e)
+void CoordMng::btDelete_Click(Win::Event& e)
 {
-	//_____________________________________________________________ Validate
-	/*tr1::wregex regextbxLast_name_p(L"[A-Za-z0-9]+");
-	if (tr1::regex_match(tbxLast_name_p.Text, regextbxLast_name_p) == false)
-	{
-		tbxLast_name_p.ShowBalloonTip(L"Invalid Last name p", L"Please provide one or more characters", TTI_ERROR);
-		return;
-	}
-	tr1::wregex regextbxLast_name_m(L"[A-Za-z0-9]+");
-	if (tr1::regex_match(tbxLast_name_m.Text, regextbxLast_name_m) == false)
-	{
-		tbxLast_name_m.ShowBalloonTip(L"Invalid Last name m", L"Please provide one or more characters", TTI_ERROR);
-		return;
-	}
-	tr1::wregex regextbxName(L"[A-Za-z0-9]+");
-	if (tr1::regex_match(tbxName.Text, regextbxName) == false)
-	{
-		tbxName.ShowBalloonTip(L"Invalid Name", L"Please provide one or more characters", TTI_ERROR);
-		return;
-	}
-	tr1::wregex regextbxEmail(L"[A-Za-z0-9]+");
-	if (tr1::regex_match(tbxEmail.Text, regextbxEmail) == false)
-	{
-		tbxEmail.ShowBalloonTip(L"Invalid Email", L"Please provide one or more characters", TTI_ERROR);
-		return;
-	}*/
-	Sql::StringBuilder sb(L"professor", L"professor_id", professor_id);
-	sb.Bind(L"last_name_p", tbxLast_name_p);
-	sb.Bind(L"last_name_m", tbxLast_name_m);
-	sb.Bind(L"name", tbxName);
-	sb.Bind(L"email", tbxEmail);
-	sb.Bind(L"extension", tbxExtension);
-	sb.Bind(L"department_id", ddDepartment);
-	sb.Bind(L"promep", ckPromep);
-	sb.Bind(L"sni", ckSni);
-	Sql::SqlConnection conn;
-	int rows = 0;
+	int period_id=1, count=0;
 	wstring cmd;
+
+	Sql::SqlConnection conn;
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD); 
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period_id);
+		count=conn.GetInt(cmd);
+		if(count>0)
+		{
+			this->MessageBox(L"Schedule of this period already been generated", L"Registration could not be admitted", MB_OK | MB_ICONERROR);
+			return;
+		}
+		conn.CloseSession();
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+
+	Win::HourGlassCursor hgc(true);
+	const int index=lvAsign.GetSelectedIndex();
+	if (index<0)return;
+	if (this->MessageBox(L"Are you sure you want to delete the selected record?",
+		L"Delete Record", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
+
+	int coord_id=0;
+
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
 		//conn.OpenSession(hWnd, CONNECTION_STRING);
-		rows = conn.ExecuteNonQuery(sb.GetString());
-		if (rows!=1)
+
+		Sys::Format(cmd,L"SELECT coordinator_id FROM coordinator WHERE program_id=%d",career_id);
+		coord_id=conn.GetInt(cmd);
+
+		Sys::Format(cmd,L"SELECT property FROM assignment WHERE course_id=%d AND professor_id=%d AND period_id=%d AND grupo='%c'",
+		assign[index].course_id,assign[index].professor_id,assign[index].period_id,assign[index].group[0]);
+		if(coord_id!=conn.GetInt(cmd))
 		{
-			this->MessageBox(Sys::Convert::ToString(rows), L"Error: number of affected rows", MB_OK | MB_ICONERROR);
+			this->MessageBox(L"You're not allowed to delete this record", L"Error", MB_OK | MB_ICONERROR);
 			return;
 		}
-		if(professor_id==-1)professor_id=conn.GetInt(L"SELECT SCOPE_IDENTITY() FROM professor");
-		
-		int i, j, days, hours, day_id, hour_id;
-		days=conn.GetInt(L"SELECT COUNT(*) FROM week_day");
-		hours=conn.GetInt(L"SELECT COUNT(*) FROM classtime");
-		Sys::Format(cmd,L"DELETE FROM time_prof WHERE professor_id=%d",professor_id);
-		conn.ExecuteNonQuery(cmd);
-		for(i=0;i<days;i++)
+
+		Sys::Format(cmd,L"DELETE FROM assignment WHERE course_id=%d AND professor_id=%d AND period_id=%d AND grupo='%c'",
+		assign[index].course_id,assign[index].professor_id,assign[index].period_id,assign[index].group[0]);
+		int rows = conn.ExecuteNonQuery(cmd);
+		if (rows!=1)
 		{
-			if(clDays.Items[i].Checked)
+			this->MessageBox(L"Delete could not be admitted", L"Error", MB_OK | MB_ICONERROR);
+			return;
+		}
+		Sys::Format(cmd,L"SELECT COUNT(*) FROM perturbation WHERE course_id=%d AND grupo='%c'",assign[index].course_id,assign[index].group[0]);
+		rows = conn.GetInt(cmd);
+		if (rows==1)
+		{
+			Sys::Format(cmd,L"DELETE FROM perturbation WHERE course_id=%d AND grupo='%c'",assign[index].course_id,assign[index].group[0]);
+			int rows = conn.ExecuteNonQuery(cmd);
+			if (rows!=1)
 			{
-				day_id=clDays.Items[i].Data;
-				for(j=0;j<hours;j++)
-				{
-					if(clHours.Items[j].Checked)
-					{
-						hour_id=clHours.Items[j].Data;
-						Sys::Format(cmd,L"INSERT INTO time_prof VALUES(%d,%d,%d)",professor_id,hour_id,day_id);
-						rows = conn.ExecuteNonQuery(cmd);
-						if (rows!=1)
-						{
-							this->MessageBox(Sys::Convert::ToString(rows), L"Error: number of affected rows", MB_OK | MB_ICONERROR);
-							return;
-						}
-					}
-				}
+				this->MessageBox(L"Delete could not be admitted on perturbation", L"Error", MB_OK | MB_ICONERROR);
+				return;
 			}
 		}
 	}
 	catch (Sql::SqlException e)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
-		return;
 	}
+	assign.clear();
+	loadAssignments();
+}
+void CoordMng::btClose_Click(Win::Event& e)
+{
 	this->EndDialog(TRUE);
 }
-void ProfDlg::btCancel_Click(Win::Event& e)
+void CoordMng::loadAssignments()
 {
-	this->EndDialog(FALSE);
+	lvAsign.SetRedraw(false);
+	lvAsign.Items.DeleteAll();
+	lvAsign.Cols.DeleteAll();
+	lvAsign.Cols.Add(0, LVCFMT_LEFT, 100, L"Course Key");
+	lvAsign.Cols.Add(1, LVCFMT_LEFT, 200, L"Course");
+	lvAsign.Cols.Add(2, LVCFMT_LEFT, 200, L"Professor");
+	lvAsign.Cols.Add(3, LVCFMT_RIGHT, 60, L"Quota");
+	lvAsign.Cols.Add(4, LVCFMT_RIGHT, 60, L"Group");
+
+	wstring cmd;
+	int count=0;
+	const int period=1;
+	if(period<0)return;
+	Sql::SqlConnection conn;
+	try
+	{
+		Sys::Format(cmd, L"SELECT COUNT(*) FROM schedule WHERE period_id=%d", period);
+		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		count=conn.GetInt(cmd);
+		conn.CloseSession();
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+	
+	Assign aux;
+	wchar_t course_key[16],course[64],professor[256];
+	int index=0,quota=0,period_id=1;
+	if(count<1)
+	{
+		Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name, a.cupo, a.grupo \
+					  FROM assignment a, professor p, course c, prog_course pc, program pr, period pe\
+					  WHERE a.course_id=c.course_id AND a.professor_id=p.professor_id AND a.period_id=pe.period_id AND c.course_id=pc.course_id \
+					        AND pc.program_id=pr.program_id AND pc.program_id=%d AND a.period_id=%d", career_id, period_id);
+	}
+	else
+	{
+		Sys::Format(cmd,L"SELECT s.course_id, s.professor_id, s.period_id, c.course_key, c.descr, p.last_name_p+' '+ p.last_name_m+', '+p.name, 0, s.grupo \
+					  FROM schedule s, professor p, course c, prog_course pc, program pr, period pe\
+					  WHERE s.course_id=c.course_id AND s.professor_id=p.professor_id AND s.period_id=pe.period_id AND c.course_id=pc.course_id \
+					        AND pc.program_id=pr.program_id AND s.week_day_id BETWEEN 1 AND 2 AND pc.program_id=%d AND s.period_id=%d", career_id, period_id);
+	}
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		conn.ExecuteSelect(cmd);
+		conn.BindColumn(1,aux.course_id);
+		conn.BindColumn(2,aux.professor_id);
+		conn.BindColumn(3,aux.period_id);
+		conn.BindColumn(4,course_key,16);
+		conn.BindColumn(5,course,64);
+		conn.BindColumn(6,professor,128);
+		conn.BindColumn(7,quota);
+		conn.BindColumn(8,aux.group,2);
+
+		while (conn.Fetch())
+		{
+			assign.push_back(aux);
+			lvAsign.Items.Add(index,course_key,index);
+			lvAsign.Items[index][1].Text=course;
+			lvAsign.Items[index][2].Text=professor;
+			if(count<1)lvAsign.Items[index][3].Text=Sys::Convert::ToString(quota);
+			else lvAsign.Items[index][3].Text=L"Don't Apply";
+			lvAsign.Items[index][4].Text=aux.group;
+			index++;
+		}
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+	lvAsign.SetRedraw(true);
 }
+void CoordMng::lvAsign_DblClk(Win::Event& e)
+{
+	btDelete_Click(e);
+}
+void CoordMng::btSched_Click(Win::Event& e)
+{
+}
+

@@ -31,14 +31,12 @@ void CoordMng::Window_Open(Win::Event& e)
 		conn.ExecuteSelect(cmd, 100, lvProfessor);
 		Sys::Format(cmd,L"SELECT c.course_id, c.course_key, c.descr FROM course c, prog_course pc, program p WHERE c.course_id=pc.course_id AND pc.program_id=p.program_id AND pc.program_id=%d",career_id);
 		conn.ExecuteSelect(cmd, 100, lvCourse);
-		conn.ExecuteSelect(L"SELECT * FROM period ORDER BY period_id DESC", 100, ddPeriod);
 	}
 	catch (Sql::SqlException e)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 	this->Text=L"Welcome Coordinator";
-	ddPeriod.SelectedIndex=0;
 	loadAssignments();
 }
 void CoordMng::Window_Close(Win::Event& e)
@@ -74,13 +72,8 @@ void CoordMng::btAdd_Click(Win::Event& e)
 	}
 	professor_id=lvProfessor.Items[professor].Data;
 
-	const int period=ddPeriod.GetSelectedIndex();
-	if(period<0)
-	{
-		this->MessageBox(L"You have not selected a period",L"Invalid Period",MB_ICONERROR);
-		return;
-	}
-	period_id=ddPeriod.GetSelectedData();
+	const int period=1;
+	period_id=1;
 
 	cupo=tbxCupo.GetInt(); 
 	if(cupo<5 || cupo==0)
@@ -133,11 +126,13 @@ void CoordMng::btAdd_Click(Win::Event& e)
 	}
 	loadAssignments();
 }
+void CoordMng::btSched_Click(Win::Event& e)
+{
+}
 void CoordMng::btDelete_Click(Win::Event& e)
 {
-	int period_id=0, count=0;
+	int period_id=1, count=0;
 	wstring cmd;
-	period_id=ddPeriod.GetSelectedData();
 
 	Sql::SqlConnection conn;
 	try
@@ -213,10 +208,6 @@ void CoordMng::btClose_Click(Win::Event& e)
 {
 	this->EndDialog(TRUE);
 }
-void CoordMng::ddPeriod_SelChange(Win::Event& e)
-{
-	loadAssignments();
-}
 void CoordMng::loadAssignments()
 {
 	lvAsign.SetRedraw(false);
@@ -230,7 +221,7 @@ void CoordMng::loadAssignments()
 
 	wstring cmd;
 	int count=0;
-	const int period=ddPeriod.GetSelectedData();
+	const int period=1;
 	if(period<0)return;
 	Sql::SqlConnection conn;
 	try
@@ -247,7 +238,7 @@ void CoordMng::loadAssignments()
 	
 	Assign aux;
 	wchar_t course_key[16],course[64],professor[256];
-	int index=0,quota=0,period_id=ddPeriod.SelectedData;
+	int index=0,quota=0,period_id=1;
 	if(count<1)
 	{
 		Sys::Format(cmd,L"SELECT c.course_id, p.professor_id, pe.period_id, c.course_key, c.descr,p.last_name_p+' '+ p.last_name_m+', '+p.name, a.cupo, a.grupo \

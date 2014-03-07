@@ -100,7 +100,6 @@ END
 
 IDC_TIMESUNIV ACCELERATORS
 BEGIN
-    "u",            IDM_UPDOWN,             ASCII,  ALT, NOINVERT
     "/",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
     "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
     VK_RETURN,      IDM_CAREER,             VIRTKEY, NOINVERT
@@ -116,12 +115,14 @@ BEGIN
     "n",            IDM_NEW,                ASCII,  ALT, NOINVERT
     "o",            IDM_OPEN,               ASCII,  ALT, NOINVERT
     "v",            IDM_PASTE,              ASCII,  ALT, NOINVERT
-    VK_RETURN,      IDM_PERIOD,             VIRTKEY, NOINVERT
     "p",            IDM_PRINT,              ASCII,  ALT, NOINVERT
     "w",            IDM_PRINTPREVIEW,       ASCII,  ALT, NOINVERT
     VK_RETURN,      IDM_PROFESSOR,          VIRTKEY, NOINVERT
     "s",            IDM_SAVE,               ASCII,  ALT, NOINVERT
     "s",            IDM_SELECT,             ASCII,  ALT, NOINVERT
+    "u",            IDM_UPDOWN,             ASCII,  ALT, NOINVERT
+    VK_RETURN,      IDM_ADDSCH,             VIRTKEY, NOINVERT
+    VK_RETURN,      IDM_DELETESCH,          VIRTKEY, NOINVERT
 END
 
 
