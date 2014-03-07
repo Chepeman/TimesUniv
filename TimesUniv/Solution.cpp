@@ -277,6 +277,14 @@ void Solution::filterData()
 			std::tr1::uniform_int<int> hourDis(1, hour);
 			p=hourDis(randomGenerator);
 		}
+
+		if(i!=0)
+		{
+			if(sol[i-1].course==sol[i].course && sol[i-1].professor!=sol[i].professor)
+			{
+				p=sol[i-1].hour;
+			}
+		}
 		c=classDis(randomGenerator); //Generate the c(classroom), p(professor) with TR1 library
 		sol[i].classroom=c;
 		sol[i].hour=p;
