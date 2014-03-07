@@ -28,8 +28,8 @@ void Solution::SimAnnealPerturb(Math::ISimAnneal& original, double temperature, 
 	solSize=sol.size()/2;
 	int r1,h1,r2,h2,auxr,auxh,auxp,auxc,auxch,auxq;
 	char auxg;
-	std::tr1::uniform_int<int> classDis(1, (int)temperature);
-	std::tr1::uniform_int<int> hourDis(1, (int)temperature);
+	std::tr1::uniform_int<int> classDis(1, nRooms);
+	std::tr1::uniform_int<int> hourDis(1, nHours);
 	for(int i=0; i<solSize; i++)
 	{
 		//Code for Mondays
@@ -161,6 +161,50 @@ double Solution::SimAnnealGetError()
 				}
 			}
 		}
+
+	sSizei=solMon.size();
+	sSizej=solMon[0].size();
+	//Check error when a professor is not Base Professor on Mondays
+	for(int i=0;i<sSizei;i++)
+		for(int j=0;j<sSizej;j++)
+		{
+			if(solMon[i][j].professor!=0)
+			{
+				aux=(int)error;
+				if(solMon[i][j].hour>=5 && solMon[i][j].full_time==1)
+				error++;
+				if(error>aux)
+				{
+					err.course_id=solMon[i][j].course;
+					err.grupo=(char)solMon[i][j].group[0];
+					err.descr=L"The Professor is full time";
+					errorCourses.push_back(err);
+				}
+			}
+		}
+
+	sSizei=solThu.size();
+	sSizej=solThu[0].size();
+	//Check error when a professor is not Base Professor on Thursday
+	for(int i=0;i<sSizei;i++)
+		for(int j=0;j<sSizej;j++)
+		{
+			if(solThu[i][j].professor!=0)
+			{
+				aux=(int)error;
+				if(solThu[i][j].hour>=5 && solThu[i][j].full_time==1)
+				error++;
+				if(error>aux)
+				{
+					err.course_id=solThu[i][j].course;
+					err.grupo=(char)solThu[i][j].group[0];
+					err.descr=L"The Professor is full time";
+					errorCourses.push_back(err);
+				}
+			}
+		}
+
+	
 	return error;
 }
 void Solution::filterData()
@@ -171,7 +215,7 @@ void Solution::filterData()
 	int rom, quot;
 	int solSize=-1;
 	//needs to be modified, adding the period
-	Sys::Format(cmd,L"SELECT a.course_id, a.professor_id, c.week_hours, a.cupo, a.grupo FROM assignment a, course c, period p WHERE c.course_id=a.course_id AND p.period_id=a.period_id AND a.period_id=%d",period_id);
+	Sys::Format(cmd,L"SELECT a.course_id, a.professor_id, c.week_hours, a.cupo, a.grupo, pf.isbase FROM assignment a, course c, period p, professor pf WHERE c.course_id=a.course_id AND p.period_id=a.period_id AND a.professor_id=pf.professor_id AND a.period_id=%d",period_id);
 	
 	try  
 	{
@@ -184,6 +228,7 @@ void Solution::filterData()
 		conn.BindColumn(3,hor.classhours);
 		conn.BindColumn(4,hor.quota);
 		conn.BindColumn(5,hor.group,2);
+		conn.BindColumn(6,hor.full_time);
 		while(conn.Fetch())
 		{
 			sol.push_back(hor);
@@ -221,8 +266,18 @@ void Solution::filterData()
 	solSize=sol.size();
 	for(int i=0; i<solSize; i++)
 	{
+		if(sol[i].full_time==1)
+		{
+			std::tr1::uniform_int<int> hourDis(1, 4);
+			p=hourDis(randomGenerator);
+
+		}
+		else
+		{
+			std::tr1::uniform_int<int> hourDis(1, hour);
+			p=hourDis(randomGenerator);
+		}
 		c=classDis(randomGenerator); //Generate the c(classroom), p(professor) with TR1 library
-		p=hourDis(randomGenerator);
 		sol[i].classroom=c;
 		sol[i].hour=p;
 	}
@@ -238,7 +293,8 @@ void Solution::filterData()
 	for(int i=0;i<room;i++)
 		solThu[i].resize(hour);
 	for(int i=0; i<solSize; i++)
-	{		
+	{	
+
 		if(sol[i].classhours==6 && checkData(solMon,sol[i].hour,sol[i].classroom)==true)
 		{
 			solMon[sol[i].classroom][sol[i].hour]=sol[i];

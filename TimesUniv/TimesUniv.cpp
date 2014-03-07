@@ -184,6 +184,7 @@ void TimesUniv::Window_Close(Win::Event& e)
 }
 void TimesUniv::Window_Timer(Win::Event& e)
 {
+	wstring cresult;
 	if (e.wParam== MAIN_TIMER)
 	{
 		wchar_t info[128];
@@ -197,7 +198,9 @@ void TimesUniv::Window_Timer(Win::Event& e)
 		{ 
 			this->timer.Kill(MAIN_TIMER); 
 			threadObject.WaitForExit(); 
-			this->MessageBox(L"The solution has been reached", L"Solution", MB_OK);
+			Sys::Format(cresult,L"Process Terminated with %g Errors", derror);
+			this->MessageBox(cresult, L"Solution", MB_OK);
+			this->SetWindowText(L"Academic Secretary");
 			//For solMon
 			sizei=solution.solMon.size();
 			sizej=solution.solMon[0].size();
@@ -379,12 +382,12 @@ void TimesUniv::btGenerate_Click(Win::Event& e)
 	solutionWork2=Solution::Solution(nHours,nRooms,nCourse);
 	solutionWork2.period_id=period_id;
 
-	//simAnneal.goal = 1e-9; 
-	simAnneal.goal = 0;
+	simAnneal.goal = 1e-9; 
+	//simAnneal.goal = 0;
 	simAnneal.initialTemp = 6; 
 	simAnneal.finalTemp = 1; 
 	simAnneal.numTemps = 2500; 
-	simAnneal.numIterations = 5; 
+	simAnneal.numIterations = 100; 
 	simAnneal.cycles = 10; 
 	simAnneal.isCoolingScheduleLinear = false; 
 	simAnneal.Setup(error, solution, solutionWork1, solutionWork2);

@@ -9,6 +9,7 @@ struct Asignation //Needs to be modified, adding the quota and professor hours
 	int classhours;
 	int quota;
 	wchar_t group[2];
+	int full_time;
 };
 
 struct errorCourse
