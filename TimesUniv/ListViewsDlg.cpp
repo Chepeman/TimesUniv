@@ -238,9 +238,11 @@ void ListViewsDlg::Cmd_Delete(Win::Event& e)
 	//__________________________________________________ Ask the user
 	if (this->MessageBox(L"Are you sure you want to delete the selected row?",L"Delete Item", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
 	const int ID=lvMain.Items[index].Data;
-	wstring cmd;
-	int rows = 0;
+	
 	Sql::SqlConnection conn;
+	int rows = 0;
+	wstring cmd;
+	
 	try
 	{
 		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
@@ -261,7 +263,7 @@ void ListViewsDlg::Cmd_Delete(Win::Event& e)
 	}
 	catch (Sql::SqlException e)
 	{
-		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		this->MessageBox(L"To do this operation, first you should all the dependencies", L"Warning", MB_OK | MB_ICONWARNING);
 	}
 	if(selected==COORDINATOR)UpdateLvCoord();
 	if(selected==PROFESSOR)UpdateLvProf();
@@ -333,6 +335,7 @@ void ListViewsDlg::UpdateLvProf()
 	lvMain.Cols.Add(2, LVCFMT_CENTER, 100, L"Extension");
 	lvMain.Cols.Add(3, LVCFMT_CENTER, 100, L"Promep");
 	lvMain.Cols.Add(4, LVCFMT_CENTER, 100, L"SNI");
+	lvMain.Cols.Add(5, LVCFMT_CENTER, 100, L"Full Time");
 
 	int selection=ddCareer.SelectedData;
 	wstring cmd;
@@ -348,7 +351,8 @@ void ListViewsDlg::UpdateLvProf()
 		{
 			Sys::Format(cmd,L"SELECT p.professor_id, p.last_name_p+' '+p.last_name_m+', '+p.name, p.email, p.extension,\
 							CASE WHEN p.promep = 1 THEN 'Yes' ELSE 'No' END,\
-							CASE WHEN p.sni = 1 THEN 'Yes' ELSE 'No' END\
+							CASE WHEN p.sni = 1 THEN 'Yes' ELSE 'No' END,\
+							CASE WHEN p.isbase = 1 THEN 'Yes' ELSE 'No' END\
 					  FROM professor p, department d, program pg\
 					  WHERE p.department_id=d.department_id AND pg.department_id=d.department_id AND pg.program_id=%d\
 					  ORDER BY p.last_name_p",selection);
@@ -357,7 +361,8 @@ void ListViewsDlg::UpdateLvProf()
 		{
 			Sys::Format(cmd,L"SELECT p.professor_id, p.last_name_p+' '+p.last_name_m+', '+p.name, p.email, p.extension,\
 							CASE WHEN p.promep = 1 THEN 'Yes' ELSE 'No' END,\
-							CASE WHEN p.sni = 1 THEN 'Yes' ELSE 'No' END\
+							CASE WHEN p.sni = 1 THEN 'Yes' ELSE 'No' END,\
+							CASE WHEN p.isbase = 1 THEN 'Yes' ELSE 'No' END\
 					  FROM professor p ORDER BY p.last_name_p");
 		}
         conn.ExecuteSelect(cmd, 100, lvMain);
