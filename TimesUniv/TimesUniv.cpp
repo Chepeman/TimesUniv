@@ -135,6 +135,8 @@ void TimesUniv::Window_Open(Win::Event& e)
 		ddCareer.SelectedIndex=0;
 		loadAssignments();
 		loadProposals();
+		LoadPeriod();
+		LoadOnline();
 		this->Text = L"Welcome Academic Secretary";
 		this->Maximize();
 
@@ -281,9 +283,46 @@ void TimesUniv::Window_Timer(Win::Event& e)
 
 void TimesUniv::Cmd_Addsch(Win::Event& e)
 {
+	Win::HourGlassCursor hgc(true);
+	if (this->MessageBox(L"This operation will delete the current schedule. Do you want to continue?",L"Delete Schedule", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
+	DeleteSchedule();
+
+	PeriodDlg dlg;
+	
+	Sql::SqlConnection conn;
+	int rows = 0;
+
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
+		rows = conn.ExecuteNonQuery(L"DELETE FROM period");
+		if (rows!=1)
+        {
+			this->MessageBox(L"Could not delete the current period", L"Error", MB_OK | MB_ICONERROR);
+			return;
+        }
+		conn.CloseSession();
+		dlg.BeginDialog(hWnd);
+		loadAssignments();
+		loadProposals();
+		LoadPeriod();
+		LoadOnline();
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		return;
+	}
 }
 void TimesUniv::Cmd_Deletesch(Win::Event& e)
 {
+	Win::HourGlassCursor hgc(true);
+	if(this->MessageBox(L"Are you sure you want to delete the current schedule?",L"Delete Schedule", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
+	DeleteSchedule();
+	loadAssignments();
+	loadProposals();
+	LoadPeriod();
+	LoadOnline();
 }
 void TimesUniv::Cmd_Coordinator(Win::Event& e)
 {
@@ -656,6 +695,53 @@ void TimesUniv::loadProposals() //finish this function
 	}
 	lvProposal.SetRedraw(true);
 }
+void TimesUniv::LoadPeriod()
+{
+	Sql::SqlConnection conn;
+	int rows = 0;
+	wstring period, descr, date1, date2;
+
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
+		conn.GetString(L"SELECT descr FROM period WHERE period_id = 1", descr, 100);
+		conn.GetString(L"SELECT CONVERT(NVARCHAR(14), begin_date, 107) FROM period WHERE period_id = 1", date1, 100);
+		conn.GetString(L"SELECT CONVERT(NVARCHAR(14), end_date, 107) FROM period WHERE period_id = 1", date2, 100);
+		conn.CloseSession();
+		
+		period+=descr;
+		period+=L"\t(";
+		period+=date1;
+		period+=L"  -  ";
+		period+=date2;
+		period+=L")";
+		tbxPeriod.SetText(period);
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		return;
+	}
+}
+void TimesUniv::LoadOnline()
+{
+	bool online=false;
+	Sql::SqlConnection conn;
+
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		online = conn.GetBool(L"SELECT show_online FROM period WHERE period_id = 1");
+		conn.CloseSession();
+		if(online)ckOnline.SetChecked(true);
+		else ckOnline.SetChecked(false);
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		return;
+	}
+}
 
 void TimesUniv::ddCareer_SelChange(Win::Event& e)
 {
@@ -738,4 +824,41 @@ void TimesUniv::UpDownLoad(int period_idd)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
+}
+void TimesUniv::DeleteSchedule()
+{
+	Sql::SqlConnection conn;
+	int rows = 0;
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
+		conn.ExecuteNonQuery(L"DELETE FROM schedule");
+		conn.ExecuteNonQuery(L"DELETE FROM perturbation");
+		conn.ExecuteNonQuery(L"DELETE FROM course_time");
+		conn.ExecuteNonQuery(L"DELETE FROM assignment");
+		conn.CloseSession();
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+	}
+}
+void TimesUniv::ckOnline_Click(Win::Event& e)
+{
+	bool online = ckOnline.IsChecked();
+	Sql::SqlConnection conn;
+
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD);
+		if(online)conn.ExecuteNonQuery(L"UPDATE period SET show_online = 1 WHERE period_id = 1");
+		else conn.ExecuteNonQuery(L"UPDATE period SET show_online = 0 WHERE period_id = 1");
+		conn.CloseSession();
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		return;
+	}
+	LoadOnline();
 }

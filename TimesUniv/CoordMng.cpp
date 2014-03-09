@@ -38,6 +38,7 @@ void CoordMng::Window_Open(Win::Event& e)
 	}
 	this->Text=L"Welcome Coordinator";
 	loadAssignments();
+	LoadPeriod();
 }
 void CoordMng::Window_Close(Win::Event& e)
 {
@@ -283,6 +284,34 @@ void CoordMng::loadAssignments()
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
 	lvAsign.SetRedraw(true);
+}
+void CoordMng::LoadPeriod()
+{
+	Sql::SqlConnection conn;
+	int rows = 0;
+	wstring period, descr, date1, date2;
+
+	try
+	{
+		conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
+		conn.GetString(L"SELECT descr FROM period WHERE period_id = 1", descr, 100);
+		conn.GetString(L"SELECT CONVERT(NVARCHAR(14), begin_date, 107) FROM period WHERE period_id = 1", date1, 100);
+		conn.GetString(L"SELECT CONVERT(NVARCHAR(14), end_date, 107) FROM period WHERE period_id = 1", date2, 100);
+		conn.CloseSession();
+		
+		period+=descr;
+		period+=L"\t(";
+		period+=date1;
+		period+=L"  -  ";
+		period+=date2;
+		period+=L")";
+		tbxPeriod.SetText(period);
+	}
+	catch (Sql::SqlException e)
+	{
+		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
+		return;
+	}
 }
 void CoordMng::lvAsign_DblClk(Win::Event& e)
 {

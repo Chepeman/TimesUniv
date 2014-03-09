@@ -14,9 +14,8 @@
 #define CAREER 3
 #define COURSE 4
 #define DEPARTMENT 5
-#define PERIOD 6
-#define CLASSROOM 7
-#define CLASSTIME 8
+#define CLASSROOM 6
+#define CLASSTIME 7
 
 class ListViewsDlg: public Win::Dialog
 {

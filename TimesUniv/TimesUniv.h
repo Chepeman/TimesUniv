@@ -32,6 +32,9 @@ public:
 	}
 	void loadAssignments();
 	void loadProposals();
+	void LoadPeriod();
+	void LoadOnline();
+	void DeleteSchedule();
 	vector<Assign> assign;
 	Mt::DoubleTs error;
 	Solution solution, solutionWork1, solutionWork2; 
@@ -58,6 +61,7 @@ protected:
 	Win::Button btExport;
 	Win::Textbox tbxPeriod;
 	Win::Label lb1;
+	Win::Button ckOnline;
 protected:
 	Win::Gdi::Font fontArial014A;
 	void GetWindowInformation(CREATESTRUCT& createStruct)
@@ -78,8 +82,9 @@ protected:
 		btGenerate.Create(NULL, L"Generate", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 763, 561, 110, 28, hWnd, 1006);
 		btClose.Create(NULL, L"Close", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 650, 561, 110, 28, hWnd, 1007);
 		btExport.Create(NULL, L"Save && Export", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_PUSHBUTTON | BS_CENTER | BS_VCENTER, 876, 561, 110, 28, hWnd, 1008);
-		tbxPeriod.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_READONLY | ES_LEFT | ES_WINNORMALCASE, 467, 54, 275, 26, hWnd, 1009);
+		tbxPeriod.Create(WS_EX_CLIENTEDGE, NULL, WS_CHILD | WS_TABSTOP | WS_VISIBLE | ES_AUTOHSCROLL | ES_READONLY | ES_LEFT | ES_WINNORMALCASE, 466, 54, 280, 26, hWnd, 1009);
 		lb1.Create(NULL, L"Period:", WS_CHILD | WS_VISIBLE | SS_LEFT | SS_WINNORMAL, 415, 63, 48, 16, hWnd, 1010);
+		ckOnline.Create(NULL, L"Show schedule online:", WS_CHILD | WS_TABSTOP | WS_VISIBLE | BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_LEFT | BS_VCENTER, 821, 57, 162, 26, hWnd, 1011);
 		lvAsign.SetExtStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 		lvProposal.SetExtStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 		fontArial014A.Create(L"Arial", 14, false, false, false, false);
@@ -93,6 +98,7 @@ protected:
 		btExport.Font = fontArial014A;
 		tbxPeriod.Font = fontArial014A;
 		lb1.Font = fontArial014A;
+		ckOnline.Font = fontArial014A;
 		gbox1.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_CENTER, DOCK_BORDER);
 		gbox2.SetDock(DOCK_CENTER, DOCK_BORDER, DOCK_BORDER, DOCK_BORDER);
 		ddCareer.SetDock(DOCK_BORDER, DOCK_BORDER, DOCK_CENTER, DOCK_NONE);
@@ -101,8 +107,9 @@ protected:
 		btGenerate.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
 		btClose.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
 		btExport.SetDock(DOCK_NONE, DOCK_NONE, DOCK_BORDER, DOCK_BORDER);
-		tbxPeriod.SetDock(DOCK_CENTER, DOCK_BORDER, DOCK_NONE, DOCK_NONE);
+		tbxPeriod.SetDock(DOCK_CENTER, DOCK_BORDER, DOCK_BORDER, DOCK_NONE);
 		lb1.SetDock(DOCK_CENTER, DOCK_BORDER, DOCK_NONE, DOCK_NONE);
+		ckOnline.SetDock(DOCK_NONE, DOCK_BORDER, DOCK_BORDER, DOCK_NONE);
 	}
 	//_________________________________________________
 	void ddCareer_SelChange(Win::Event& e);
@@ -111,6 +118,7 @@ protected:
 	void btGenerate_Click(Win::Event& e);
 	void btClose_Click(Win::Event& e);
 	void btExport_Click(Win::Event& e);
+	void ckOnline_Click(Win::Event& e);
 	void Window_Close(Win::Event& e);
 	void Window_Destroy(Win::Event& e);
 	void Window_Open(Win::Event& e);
@@ -134,6 +142,7 @@ protected:
 		if (btGenerate.IsEvent(e, BN_CLICKED)) {btGenerate_Click(e); return true;}
 		if (btClose.IsEvent(e, BN_CLICKED)) {btClose_Click(e); return true;}
 		if (btExport.IsEvent(e, BN_CLICKED)) {btExport_Click(e); return true;}
+		if (ckOnline.IsEvent(e, BN_CLICKED)) {ckOnline_Click(e); return true;}
 		if (this->IsEvent(e, IDM_COORDINATOR)) {Cmd_Coordinator(e); return true;}
 		if (this->IsEvent(e, IDM_PROFESSOR)) {Cmd_Professor(e); return true;}
 		if (this->IsEvent(e, IDM_CAREER)) {Cmd_Career(e); return true;}

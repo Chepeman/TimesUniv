@@ -105,8 +105,6 @@ void ListViewsDlg::Window_Open(Win::Event& e)
 	}
 	if(selected==DEPARTMENT)
 		UpdateLvDept();
-	if(selected==PERIOD)
-		UpdateLvPeriod();
 	if(selected==CLASSROOM)
 		UpdateLvClassroom();
 	if(selected==CLASSTIME)
@@ -148,12 +146,6 @@ void ListViewsDlg::Cmd_Insert(Win::Event& e)
 		DeptDlg dlg;
 		dlg.BeginDialog(hWnd);
 		UpdateLvDept();
-	}
-	if(selected==PERIOD)
-	{
-		PeriodDlg dlg;
-		dlg.BeginDialog(hWnd);
-		UpdateLvPeriod();
 	}
 	if(selected==CLASSROOM)
 	{
@@ -208,13 +200,6 @@ void ListViewsDlg::Cmd_Edit(Win::Event& e)
 		dlg.BeginDialog(hWnd);
 		UpdateLvDept();
 	}
-	if(selected==PERIOD)
-	{
-		PeriodDlg dlg;
-		dlg.period_id=ID;
-		dlg.BeginDialog(hWnd);
-		UpdateLvPeriod();
-	}
 	if(selected==CLASSROOM)
 	{
 		ClassroomDlg dlg;
@@ -252,7 +237,6 @@ void ListViewsDlg::Cmd_Delete(Win::Event& e)
 		if(selected==CAREER)Sys::Format(cmd, L"DELETE FROM program WHERE program_id=%d",ID);
 		if(selected==COURSE)Sys::Format(cmd, L"DELETE FROM course WHERE course_id=%d",ID);
 		if(selected==DEPARTMENT)Sys::Format(cmd, L"DELETE FROM department WHERE department_id=%d",ID);
-		if(selected==PERIOD)Sys::Format(cmd, L"DELETE FROM period WHERE period_id=%d",ID);
 		if(selected==CLASSROOM)Sys::Format(cmd, L"DELETE FROM classroom WHERE classroom_id=%d",ID);
 		if(selected==CLASSTIME)Sys::Format(cmd, L"DELETE FROM classtime WHERE classtime_id=%d",ID);
         rows = conn.ExecuteNonQuery(cmd);
@@ -270,7 +254,6 @@ void ListViewsDlg::Cmd_Delete(Win::Event& e)
 	if(selected==CAREER)UpdateLvCareer();
 	if(selected==COURSE)UpdateLvCourse();
 	if(selected==DEPARTMENT)UpdateLvDept();
-	if(selected==PERIOD)UpdateLvPeriod();
 	if(selected==CLASSROOM)UpdateLvClassroom();
 	if(selected==CLASSTIME)UpdateLvTime();
 }
@@ -447,31 +430,6 @@ void ListViewsDlg::UpdateLvDept()
          conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
          //conn.OpenSession(hWnd, CONNECTION_STRING);
          conn.ExecuteSelect(L"SELECT * FROM department ORDER BY descr", 150, lvMain);
-    }
-    catch (Sql::SqlException e)
-    {
-         this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
-    }
-	lvMain.SetRedraw(true);
-	toolbMain.EnableButton(IDM_EDIT,false);
-	toolbMain.EnableButton(IDM_DELETE,false);
-}
-void ListViewsDlg::UpdateLvPeriod()
-{
-	this->Text=L"TimesUniv - Periods";
-	lvMain.Items.DeleteAll();
-	lvMain.Cols.DeleteAll();
-	lvMain.Cols.Add(0, LVCFMT_LEFT, 150, L"Period");
-	lvMain.Cols.Add(1, LVCFMT_RIGHT, 150, L"Begin Date");
-	lvMain.Cols.Add(2, LVCFMT_RIGHT, 150, L"End Date");
-	
-	Sql::SqlConnection conn;
-    try
-    {
-         conn.OpenSession(DSN, USERNAME, PASSWORD); //Control Panel>Administrative Tools>Data Sources (ODBC)>Create dsn_myDatabase
-         //conn.OpenSession(hWnd, CONNECTION_STRING);
-         conn.ExecuteSelect(L"SELECT period_id,descr,CONVERT(NVARCHAR(14), begin_date, 107),CONVERT(NVARCHAR(14), end_date, 107) \
-							  FROM period ORDER BY begin_date", 100, lvMain);
     }
     catch (Sql::SqlException e)
     {

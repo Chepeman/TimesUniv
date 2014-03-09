@@ -6,12 +6,10 @@ class PeriodDlg: public Win::Dialog
 public:
 	PeriodDlg()
 	{
-		period_id=-1;
 	}
 	~PeriodDlg()
 	{
 	}
-	int period_id;
 private:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
 	Win::Button gbox1;
