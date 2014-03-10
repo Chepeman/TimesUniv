@@ -21,6 +21,7 @@ public:
 	}
 	int period_id;
 	vector<ScheduleID> schedule;
+
 private:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE
 	Win::Button gbox1;

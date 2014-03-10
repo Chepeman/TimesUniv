@@ -18,6 +18,10 @@ void UpDownDlg::Window_Open(Win::Event& e)
 	}
 	//________________________________________________________ lvModify
 	ddCareer.SelectedIndex=0;
+	if(isEditing==1)
+	{
+		editSchedule();
+	}
 	loadSchedule();
 }
 void UpDownDlg::btAddC_Click(Win::Event& e)
@@ -65,6 +69,7 @@ void UpDownDlg::ddCareer_SelChange(Win::Event& e)
 }
 void UpDownDlg::loadSchedule(void)
 {
+	Asignation2 asig;
 	wstring cmd;
 	lvModify.SetRedraw(false);
 	lvModify.Items.DeleteAll();
@@ -108,6 +113,19 @@ void UpDownDlg::loadSchedule(void)
 	{
 		conn.OpenSession(DSN,USERNAME,PASSWORD);
 		conn.ExecuteSelect(cmd,100,lvModify);
+		Sys::Format(cmd, L"SELECT s.course_id, s.professor_id,s.classroom_id,s.classtime_id, s.week_day_id, s.grupo FROM schedule s, prog_course pc, program p WHERE p.program_id=%d AND pc.course_id=s.course_id AND p.program_id=pc.program_id AND s.week_day_id BETWEEN 1 AND 2", career_id);
+		conn.ExecuteSelect(cmd);
+		conn.BindColumn(1,asig.course);
+		conn.BindColumn(2,asig.professor);
+		conn.BindColumn(3,asig.classroom);
+		conn.BindColumn(4,asig.classtime);
+		conn.BindColumn(5,asig.days);
+		conn.BindColumn(6,asig.group,2);
+		while(conn.Fetch())
+		{
+			asign.push_back(asig);
+		}
+
 		conn.CloseSession();
 	}
 	catch (Sql::SqlException e)
@@ -116,3 +134,30 @@ void UpDownDlg::loadSchedule(void)
 	}
 	lvModify.SetRedraw(true);
 }
+
+void UpDownDlg::editSchedule(void)
+{
+	
+	ddCareer.SetSelectedByData(career_id);
+	loadSchedule();
+	ddCareer.SetEnable(false);
+	
+	
+}
+void UpDownDlg::btEdit_Click(Win::Event& e)
+{
+	int indx=lvModify.GetSelectedIndex();
+	AddCourseUD dlg;
+	dlg.course_id=asign[indx].course;
+	dlg.professor_id=asign[indx].professor;
+	dlg.classroom_id=asign[indx].classroom;
+	dlg.classtime_id=asign[indx].classtime;
+	dlg.classdays_id=asign[indx].days;
+	dlg.career_id=career_id;
+	dlg.grupo=(char)asign[indx].group[0];
+	dlg.isEditing=1;
+	dlg.BeginDialog(hWnd);
+	loadSchedule();
+}
+
+

@@ -6,11 +6,16 @@ class AddCourseUD: public Win::Dialog
 public:
 	AddCourseUD()
 	{
+		isEditing=0;
 	}
 	~AddCourseUD()
 	{
 	}
 	int current_period;
+	int isEditing;
+	void editingCourse(void);
+	int course_id,professor_id,classroom_id,classtime_id,classdays_id, career_id;
+	char grupo;
 	void loadByCareer(void);
 private:
 	//______ Wintempla GUI manager section begin: DO NOT EDIT AFTER THIS LINE

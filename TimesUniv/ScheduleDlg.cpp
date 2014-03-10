@@ -28,6 +28,7 @@ void ScheduleDlg::Window_Open(Win::Event& e)
 	{
 		this->MessageBox(e.GetDescription(), L"Error", MB_OK | MB_ICONERROR);
 	}
+	
 }
 void ScheduleDlg::btOk_Click(Win::Event& e)
 {
@@ -83,3 +84,4 @@ void ScheduleDlg::btCancel_Click(Win::Event& e)
 {
 	this->EndDialog(FALSE);
 }
+

@@ -129,6 +129,11 @@ void CoordMng::btAdd_Click(Win::Event& e)
 }
 void CoordMng::btSched_Click(Win::Event& e)
 {
+	UpDownDlg dlg;
+	dlg.career_id=career_id;
+	dlg.isEditing=1;
+	dlg.cu_period=1;
+	dlg.BeginDialog(hWnd);
 }
 void CoordMng::btDelete_Click(Win::Event& e)
 {

@@ -1,5 +1,6 @@
 #pragma once   //_____________________________________________ CoordMng.h  
 #include "resource.h"
+#include "UpDownDlg.h"
 
 class Assign
 {
